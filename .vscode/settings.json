@@ -1,0 +1,11 @@
+// Place your settings in this file to overwrite default and user settings.
+{
+    "clang.executable": "/opt/cheerp/bin/clang++",
+    "clang.cxxflags": [
+        "-std=gnu++1z",
+        "-Iuint256_t/"
+    ],
+    "files.associations": {
+        "*.tcc": "cpp"
+    }
+}

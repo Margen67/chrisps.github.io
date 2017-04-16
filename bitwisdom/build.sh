@@ -1,1 +1,1 @@
-/opt/cheerp/bin/clang++ -std=gnu++1z -cheerp-preexecute -cheerp-no-math-imul -fno-rtti -fno-exceptions -ffunction-sections -fdata-sections -fmerge-all-constants -fno-stack-protector -fomit-frame-pointer -Os -target cheerp bitwisdom.cpp -o bitwisdom.js
+/opt/cheerp/bin/clang++ -std=gnu++1z -cheerp-preexecute -cheerp-no-math-imul -fno-rtti -fno-exceptions -ffunction-sections -fdata-sections -fmerge-all-constants -fno-stack-protector -Iuint256_t/ -fomit-frame-pointer -Os -target cheerp bitwisdom.cpp -o bitwisdom.js
