@@ -466,6 +466,10 @@ constexpr uint128_t::uint128_t(uint128_t && rhs)
 }
 constexpr uint128_t uint128_0 = 0;
 constexpr uint128_t uint128_1 = 1;
+
+constexpr uint128_t uint128_64(64);
+constexpr uint128_t uint128_128(128);
+constexpr uint128_t uint128_256(256);
 constexpr uint128_t uint128_t::operator=(const uint128_t & rhs){
     UPPER = rhs.UPPER;
     LOWER = rhs.LOWER;
@@ -1417,6 +1421,8 @@ constexpr uint256_t::uint256_t(uint256_t && rhs)
     }
 }
 
+
+
 constexpr uint256_t uint256_t::operator=(const uint256_t & rhs){
     UPPER = rhs.UPPER;
     LOWER = rhs.LOWER;
@@ -1522,11 +1528,12 @@ constexpr uint256_t uint256_t::operator~() const{
 constexpr uint256_t uint256_t::operator<<(const uint128_t & rhs) const{
     return *this << uint256_t(rhs);
 }
-
+//constexpr uint256_t uint256_0 = 0;
+//constexpr uint256_t uint256_1 = 1;
 constexpr uint256_t uint256_t::operator<<(const uint256_t & rhs) const{
     const uint128_t shift = rhs.LOWER;
     if (((bool) rhs.UPPER) || (shift >= uint128_256)){
-        return uint256_0;
+        return 0;
     }
     else if (shift == uint128_128){
         return uint256_t(LOWER, uint128_0);
@@ -1541,7 +1548,7 @@ constexpr uint256_t uint256_t::operator<<(const uint256_t & rhs) const{
         return uint256_t(LOWER << (shift - uint128_128), uint128_0);
     }
     else{
-        return uint256_0;
+        return 0;
     }
 }
 
@@ -1561,7 +1568,7 @@ constexpr uint256_t uint256_t::operator>>(const uint128_t & rhs) const{
 constexpr uint256_t uint256_t::operator>>(const uint256_t & rhs) const{
     const uint128_t shift = rhs.LOWER;
     if (((bool) rhs.UPPER) | (shift >= uint128_256)){
-        return uint256_0;
+        return 0;
     }
     else if (shift == uint128_128){
         return uint256_t(UPPER);
@@ -1576,7 +1583,7 @@ constexpr uint256_t uint256_t::operator>>(const uint256_t & rhs) const{
         return uint256_t(UPPER >> (shift - uint128_128));
     }
     else{
-        return uint256_0;
+        return 0;
     }
 }
 
@@ -1757,33 +1764,33 @@ constexpr uint256_t & uint256_t::operator*=(const uint256_t & rhs){
 
 constexpr std::pair <uint256_t, uint256_t> uint256_t::divmod(const uint256_t & lhs, const uint256_t & rhs) const{
     // Save some calculations /////////////////////
-    if (rhs == uint256_0){
+    if (rhs == 0){
         assert(false);//throw std::domain_error("Error: division or modulus by 0");
     }
-    else if (rhs == uint256_1){
-        return std::pair <uint256_t, uint256_t> (lhs, uint256_0);
+    else if (rhs == 1){
+        return std::pair <uint256_t, uint256_t> (lhs, 0);
     }
     else if (lhs == rhs){
-        return std::pair <uint256_t, uint256_t> (uint256_1, uint256_0);
+        return std::pair <uint256_t, uint256_t> (1, 0);
     }
-    else if ((lhs == uint256_0) || (lhs < rhs)){
-        return std::pair <uint256_t, uint256_t> (uint256_0, lhs);
+    else if ((lhs == 0) || (lhs < rhs)){
+        return std::pair <uint256_t, uint256_t> (0, lhs);
     }
 
-    std::pair <uint256_t, uint256_t> qr(uint256_0, lhs);
+    std::pair <uint256_t, uint256_t> qr(0, lhs);
     uint256_t copyd = rhs << (lhs.bits() - rhs.bits());
-    uint256_t adder = uint256_1 << (lhs.bits() - rhs.bits());
+    uint256_t adder = 1 << (lhs.bits() - rhs.bits());
     if (copyd > qr.second){
-        copyd >>= uint256_1;
-        adder >>= uint256_1;
+        copyd >>= 1;
+        adder >>= 1;
     }
     while (qr.second >= rhs){
         if (qr.second >= copyd){
             qr.second -= copyd;
             qr.first |= adder;
         }
-        copyd >>= uint256_1;
-        adder >>= uint256_1;
+        copyd >>= 1;
+        adder >>= 1;
     }
     return qr;
 }
@@ -1823,7 +1830,7 @@ constexpr uint256_t & uint256_t::operator%=(const uint256_t & rhs){
 }
 
 constexpr uint256_t & uint256_t::operator++(){
-    *this += uint256_1;
+    *this += 1;
     return *this;
 }
 
@@ -1834,7 +1841,7 @@ constexpr uint256_t uint256_t::operator++(int){
 }
 
 constexpr uint256_t & uint256_t::operator--(){
-    *this -= uint256_1;
+    *this -= 1;
     return *this;
 }
 
@@ -1849,7 +1856,7 @@ constexpr uint256_t uint256_t::operator+() const{
 }
 
 constexpr uint256_t uint256_t::operator-() const{
-    return ~*this + uint256_1;
+    return ~*this + 1;
 }
 
 constexpr const uint128_t & uint256_t::upper() const {
@@ -1880,7 +1887,7 @@ constexpr uint16_t uint256_t::bits() const{
     return out;
 }
 
-constexpr std::string uint256_t::str(uint8_t base, const unsigned int & len) const{
+std::string uint256_t::str(uint8_t base, const unsigned int & len) const{
     if ((base < 2) || (base > 16)){
         assert(false);//throw std::invalid_argument("Base must be in the range 2-16");
     }
@@ -1889,7 +1896,7 @@ constexpr std::string uint256_t::str(uint8_t base, const unsigned int & len) con
         out = "0";
     }
     else{
-        std::pair <uint256_t, uint256_t> qr(*this, uint256_0);
+        std::pair <uint256_t, uint256_t> qr(*this, 0);
         do{
             qr = divmod(qr.first, base);
             out = "0123456789abcdef"[(uint8_t) qr.second] + out;

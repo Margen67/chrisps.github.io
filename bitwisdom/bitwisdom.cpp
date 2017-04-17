@@ -12,6 +12,11 @@ using namespace client;
 using biggest_t = uint256_t;
 using Values_t = std::vector<biggest_t>;
 using ix_t = double;
+using jnum_t = double;
+constexpr jnum_t operator ""_jschar(char c) {
+    return static_cast<jnum_t>(c);
+}
+
 static biggest_t unify(Values_t vals) {
     biggest_t result = 0;
     for(auto&& val : vals)
@@ -39,16 +44,80 @@ static Values_t operate(Values_t input, biggest_t param, biggest_t (*transformer
     }
     return result;
 }
+static biggest_t gcd( biggest_t x, biggest_t y )
+{
+    if( x < y )
+        std::swap( x, y );
+
+    while( y > biggest_t(0) )
+    {
+        biggest_t f = x % y;
+        x = y;
+        y = f;
+    }
+    return x;
+}  
+
+static biggest_t gcd(Values_t vals) {
+    biggest_t curr = vals[0];
+    for(ix_t i = 1; i < vals.size(); ++i) {
+        curr = gcd(curr, vals[i]);
+    }
+    return curr;
+}
 
 
 static HTMLTextAreaElement* texin = nullptr;
 static HTMLButtonElement* butt = nullptr;
+static HTMLTextAreaElement* texout = nullptr;
 
+static void writeOut(String&& s) {
+    String* initialValue = texout->get_value();
+    if(initialValue != nullptr) {
+        texout->set_value(initialValue->concat(String("\n"), s));
+    }
+    else
+        texout->set_value(s);
+}
 
+static void writeOut(std::string s) {
+    writeOut(String(s.data()));
+}
 
 static Values_t valarray;
-biggest_t curruni = 0;
-biggest_t currcomm = 0;
+
+static biggest_t parseVal(String& value, jnum_t radix) {
+    
+    return static_cast<uint64_t>(parseInt(value, radix));
+}
+
+static biggest_t parseInputValue(String& splitval) {
+    jnum_t splitlen = splitval.get_length();
+    const jnum_t char0 = splitlen > 0 ? splitval.charCodeAt(0) : 0;
+    const jnum_t char1 = splitlen > 1 ? splitval.charCodeAt(1) : 0;
+    jnum_t radix = 10;
+
+    if(char0 == '0'_jschar && (char1 == 'x'_jschar || char1 == 'X'_jschar)) {
+        radix = 16;
+        splitval = splitval.replace(char1 == 'X'_jschar ? "0X": "0x", "");
+    } else if(char0 == '0'_jschar && char1 == 'b'_jschar) {
+        radix = 2;
+        splitval = splitval.replace(char1 == 'B'_jschar ? "0B" : "0b", "");
+    }
+    return parseVal(splitval, radix);
+}
+
+static void writeTrivialAttributes(Values_t vals) {
+    auto unified = unify(vals);
+    auto commonOf = common(vals);
+    char buffer[20];
+    char buff2[20];
+
+    writeOut(String("Unified: ").concat(
+        String(itoa(uint32_t(unified), buffer, 16)), String("\nCommon: "),  
+        String(itoa(uint32_t(commonOf), buff2, 16))));
+}
+
 static void submit_cb() {
     String* value = texin->get_value();
     auto& values = *value->split(",");
@@ -56,27 +125,12 @@ static void submit_cb() {
     ix_t arraylen = values.get_length();
     for(ix_t i = 0; i < arraylen; ++i) {
         String& splitval = (*values[i]);
-        auto splitlen = splitval.get_length();
-        decltype(parseInt(splitval,10)) parseResult;
-        auto char0 = splitlen > 0 ? splitval.charCodeAt(0) : 0;
-        auto char1 = splitlen > 1 ? splitval.charCodeAt(1) : 0;
-        if(char0 == '0' && (char1 == 'x' || char1 == 'X'))
-            parseResult = parseInt(splitval.replace(char1 == 'X' ? "0X": "0x", ""), 16);
-        else if(char0 == '0' && char1 == 'b')
-            parseResult = parseInt(splitval.replace(char1 == 'B' ? "0B" : "0b", ""), 1);
-        else
-            parseResult = parseInt(splitval, 10);
-        valarray.push_back(uint64_t(parseResult));
+        valarray.push_back(parseInputValue(splitval));
     }
-    auto unified = unify(valarray);
-    auto commonOf = common(valarray);
-    char buffer[20];
-    char buff2[20];
-    curruni = unified;
-    currcomm = commonOf;
-    alert(String("Unified: ").concat(
-        String(itoa(uint32_t(unified), buffer, 16)), String("\nCommon: "),  
-        String(itoa(uint32_t(commonOf), buff2, 16))));
+    writeTrivialAttributes(valarray);
+
+    auto listgcd = gcd(valarray);
+    writeOut(std::string("Greatest common divisor: " + listgcd.str()));
 
 }
 
@@ -87,6 +141,7 @@ void loadCallback()
     texin = (decltype(texin))document.getElementById("range_input");
     butt = (decltype(butt))document.getElementById("submit_button");
     auto dtypebutton = document.getElementById("datatype");
+    texout = (decltype(texout))document.getElementById("output_area");
     butt->set_onclick(cheerp::Callback(submit_cb));
 }
 
