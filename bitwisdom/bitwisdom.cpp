@@ -9,7 +9,7 @@
 #include "bigints.hpp"
 #include <string>
 using namespace client;
-using biggest_t = uint128_t;
+using biggest_t = uint256_t;
 using Values_t = std::vector<biggest_t>;
 using ix_t = double;
 static biggest_t unify(Values_t vals) {
