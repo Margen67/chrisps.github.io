@@ -5,9 +5,9 @@
 #include <vector>
 #include <cstdint>
 #include <cstdlib>
-//#include "uint256_t.h"
 #include "bigints.hpp"
 #include <string>
+
 using namespace client;
 using biggest_t = uint256_t;
 using Values_t = std::vector<biggest_t>;
@@ -87,7 +87,7 @@ static void writeOut(std::string s) {
 static Values_t valarray;
 
 static biggest_t parseVal(String& value, jnum_t radix) {
-    
+
     return static_cast<uint64_t>(parseInt(value, radix));
 }
 

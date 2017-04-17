@@ -36,7 +36,7 @@ to do a general rewrite of this class.
 #include <iostream>
 #include <stdexcept>
 #include <utility>
-
+#include "commonstuff.hpp"
 class uint128_t{
     private:
         uint64_t UPPER, LOWER;
@@ -710,7 +710,7 @@ std::pair <uint128_t, uint128_t>
 constexpr uint128_t::divmod(const uint128_t & lhs, const uint128_t & rhs) const{
     // Save some calculations /////////////////////
     if (rhs == uint128_0){
-        assert(false);//throw std::domain_error("Error: division or modulus by 0");
+        assume(false);
     }
     else if (rhs == uint128_1){
         return std::pair <uint128_t, uint128_t> (lhs, uint128_0);
@@ -815,7 +815,7 @@ constexpr uint8_t uint128_t::bits() const{
 
 std::string uint128_t::str(uint8_t base, const unsigned int & len) const{
     if ((base < 2) || (base > 16)){
-        assert(false);//throw std::invalid_argument("Base must be in the range [2, 16]");
+        assume(false);
     }
     std::string out = "";
     if (!(*this)){
@@ -1528,8 +1528,7 @@ constexpr uint256_t uint256_t::operator~() const{
 constexpr uint256_t uint256_t::operator<<(const uint128_t & rhs) const{
     return *this << uint256_t(rhs);
 }
-//constexpr uint256_t uint256_0 = 0;
-//constexpr uint256_t uint256_1 = 1;
+
 constexpr uint256_t uint256_t::operator<<(const uint256_t & rhs) const{
     const uint128_t shift = rhs.LOWER;
     if (((bool) rhs.UPPER) || (shift >= uint128_256)){
@@ -1765,7 +1764,7 @@ constexpr uint256_t & uint256_t::operator*=(const uint256_t & rhs){
 constexpr std::pair <uint256_t, uint256_t> uint256_t::divmod(const uint256_t & lhs, const uint256_t & rhs) const{
     // Save some calculations /////////////////////
     if (rhs == 0){
-        assert(false);//throw std::domain_error("Error: division or modulus by 0");
+        assume(false);
     }
     else if (rhs == 1){
         return std::pair <uint256_t, uint256_t> (lhs, 0);
@@ -1889,7 +1888,7 @@ constexpr uint16_t uint256_t::bits() const{
 
 std::string uint256_t::str(uint8_t base, const unsigned int & len) const{
     if ((base < 2) || (base > 16)){
-        assert(false);//throw std::invalid_argument("Base must be in the range 2-16");
+        assume(false);
     }
     std::string out = "";
     if (!(*this)){
