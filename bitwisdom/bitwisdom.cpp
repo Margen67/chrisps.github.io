@@ -7,12 +7,12 @@
 #include <cstdlib>
 #include "bigints.hpp"
 #include <string>
-
+#include "commonstuff.hpp"
 using namespace client;
 using biggest_t = uint256_t;
 using Values_t = std::vector<biggest_t>;
-using ix_t = double;
-using jnum_t = double;
+
+
 constexpr jnum_t operator ""_jschar(char c) {
     return static_cast<jnum_t>(c);
 }
@@ -87,7 +87,8 @@ static void writeOut(std::string s) {
 static Values_t valarray;
 
 static biggest_t parseVal(String& value, jnum_t radix) {
-
+    assume(radix == 16 || radix == 10 || radix == 2);
+    assume(&value != nullptr);
     return static_cast<uint64_t>(parseInt(value, radix));
 }
 

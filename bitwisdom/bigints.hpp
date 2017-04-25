@@ -37,265 +37,267 @@ to do a general rewrite of this class.
 #include <stdexcept>
 #include <utility>
 #include "commonstuff.hpp"
+using bigint_u32type = double;
+#define BIGINT_CONSTEXPR   constexpr noinline 
 class uint128_t{
     private:
         uint64_t UPPER, LOWER;
 
     public:
         // Constructors
-        constexpr uint128_t();
-        constexpr uint128_t(const uint128_t & rhs);
-        constexpr uint128_t(uint128_t && rhs);
+        BIGINT_CONSTEXPR uint128_t();
+        BIGINT_CONSTEXPR uint128_t(const uint128_t & rhs);
+        BIGINT_CONSTEXPR uint128_t(uint128_t && rhs);
 
         template <typename T> 
-        constexpr uint128_t(const T & rhs)
+        BIGINT_CONSTEXPR uint128_t(const T & rhs)
             : UPPER(0), LOWER(rhs)
         {
-            static_assert(std::is_integral <T>::value, "Input argument type must be an integer.");
+            //static_assert(std::is_integral <T>::value, "Input argument type must be an integer.");
         }
 
         template <typename S, typename T> 
-        constexpr uint128_t(const S & upper_rhs, const T & lower_rhs)
+        BIGINT_CONSTEXPR uint128_t(const S & upper_rhs, const T & lower_rhs)
             : UPPER(upper_rhs), LOWER(lower_rhs)
         {
-            static_assert(std::is_integral <S>::value &&
+            /*static_assert(std::is_integral <S>::value &&
                           std::is_integral <T>::value
-                          , "Input argument types must be integers.");
+                          , "Input argument types must be integers.");*/
         }
 
         //  RHS input args only
 
         // Assignment Operator
-        constexpr uint128_t operator=(const uint128_t & rhs);
-        constexpr uint128_t operator=(uint128_t && rhs);
+        BIGINT_CONSTEXPR uint128_t operator=(const uint128_t & rhs);
+        BIGINT_CONSTEXPR uint128_t operator=(uint128_t && rhs);
 
         template <typename T> 
-        constexpr uint128_t operator=(const T & rhs){
-            static_assert(std::is_integral <T>::value, "Input argument type must be an integer.");
+        BIGINT_CONSTEXPR uint128_t operator=(const T & rhs){
+           // static_assert(std::is_integral <T>::value, "Input argument type must be an integer.");
             UPPER = 0;
             LOWER = rhs;
             return *this;
         }
 
         // Typecast Operators
-        constexpr operator bool() const;
-        constexpr operator uint8_t() const;
-        constexpr operator uint16_t() const;
-        constexpr operator uint32_t() const;
-        constexpr operator uint64_t() const;
+        BIGINT_CONSTEXPR operator bool() const;
+        BIGINT_CONSTEXPR operator uint8_t() const;
+        BIGINT_CONSTEXPR operator uint16_t() const;
+        BIGINT_CONSTEXPR operator uint32_t() const;
+        BIGINT_CONSTEXPR operator uint64_t() const;
 
         // Bitwise Operators
-        constexpr uint128_t operator&(const uint128_t & rhs) const;
+        BIGINT_CONSTEXPR uint128_t operator&(const uint128_t & rhs) const;
 
         template <typename T> 
-        constexpr uint128_t operator&(const T & rhs) const{
+        BIGINT_CONSTEXPR uint128_t operator&(const T & rhs) const{
             return uint128_t(0, LOWER & (uint64_t) rhs);
         }
 
-       constexpr  uint128_t & operator&=(const uint128_t & rhs);
+       BIGINT_CONSTEXPR  uint128_t & operator&=(const uint128_t & rhs);
 
-        template <typename T> constexpr uint128_t & operator&=(const T & rhs){
+        template <typename T> BIGINT_CONSTEXPR uint128_t & operator&=(const T & rhs){
             UPPER = 0;
             LOWER &= rhs;
             return *this;
         }
 
-        constexpr uint128_t operator|(const uint128_t & rhs) const;
+        BIGINT_CONSTEXPR uint128_t operator|(const uint128_t & rhs) const;
 
-        template <typename T> constexpr uint128_t operator|(const T & rhs) const{
+        template <typename T> BIGINT_CONSTEXPR uint128_t operator|(const T & rhs) const{
             return uint128_t(UPPER, LOWER | (uint64_t) rhs);
         }
 
-        constexpr uint128_t & operator|=(const uint128_t & rhs);
+        BIGINT_CONSTEXPR uint128_t & operator|=(const uint128_t & rhs);
 
-        template <typename T> constexpr uint128_t & operator|=(const T & rhs){
+        template <typename T> BIGINT_CONSTEXPR uint128_t & operator|=(const T & rhs){
             LOWER |= (uint64_t) rhs;
             return *this;
         }
 
-        constexpr uint128_t operator^(const uint128_t & rhs) const;
+        BIGINT_CONSTEXPR uint128_t operator^(const uint128_t & rhs) const;
 
-        template <typename T> constexpr uint128_t operator^(const T & rhs) const{
+        template <typename T> BIGINT_CONSTEXPR uint128_t operator^(const T & rhs) const{
             return uint128_t(UPPER, LOWER ^ (uint64_t) rhs);
         }
 
-        constexpr uint128_t & operator^=(const uint128_t & rhs);
+        BIGINT_CONSTEXPR uint128_t & operator^=(const uint128_t & rhs);
 
-        template <typename T> constexpr uint128_t & operator^=(const T & rhs){
+        template <typename T> BIGINT_CONSTEXPR uint128_t & operator^=(const T & rhs){
             LOWER ^= (uint64_t) rhs;
             return *this;
         }
 
-        constexpr uint128_t operator~() const;
+        BIGINT_CONSTEXPR uint128_t operator~() const;
 
         // Bit Shift Operators
-        constexpr uint128_t operator<<(const uint128_t & rhs) const;
+        BIGINT_CONSTEXPR uint128_t operator<<(const uint128_t & rhs) const;
 
-        template <typename T> constexpr uint128_t operator<<(const T & rhs) const{
+        template <typename T> BIGINT_CONSTEXPR uint128_t operator<<(const T & rhs) const{
             return *this << uint128_t(rhs);
         }
 
-        constexpr uint128_t & operator<<=(const uint128_t & rhs);
+        BIGINT_CONSTEXPR uint128_t & operator<<=(const uint128_t & rhs);
 
-        template <typename T> constexpr uint128_t & operator<<=(const T & rhs){
+        template <typename T> BIGINT_CONSTEXPR uint128_t & operator<<=(const T & rhs){
             *this = *this << uint128_t(rhs);
             return *this;
         }
 
-        constexpr uint128_t operator>>(const uint128_t & rhs) const;
+        BIGINT_CONSTEXPR uint128_t operator>>(const uint128_t & rhs) const;
 
-        template <typename T> constexpr uint128_t operator>>(const T & rhs) const{
+        template <typename T> BIGINT_CONSTEXPR uint128_t operator>>(const T & rhs) const{
             return *this >> uint128_t(rhs);
         }
 
-        constexpr uint128_t & operator>>=(const uint128_t & rhs);
+        BIGINT_CONSTEXPR uint128_t & operator>>=(const uint128_t & rhs);
 
-        template <typename T> constexpr uint128_t & operator>>=(const T & rhs){
+        template <typename T> BIGINT_CONSTEXPR uint128_t & operator>>=(const T & rhs){
             *this = *this >> uint128_t(rhs);
             return *this;
         }
 
         // Logical Operators
-        constexpr bool operator!() const;
-        constexpr bool operator&&(const uint128_t & rhs) const;
-        constexpr bool operator||(const uint128_t & rhs) const;
+        BIGINT_CONSTEXPR bool operator!() const;
+        BIGINT_CONSTEXPR bool operator&&(const uint128_t & rhs) const;
+        BIGINT_CONSTEXPR bool operator||(const uint128_t & rhs) const;
 
-        template <typename T> constexpr bool operator&&(const T & rhs){
+        template <typename T> BIGINT_CONSTEXPR bool operator&&(const T & rhs){
             return static_cast <bool> (*this && rhs);
         }
 
-        template <typename T> constexpr bool operator||(const T & rhs){
+        template <typename T> BIGINT_CONSTEXPR bool operator||(const T & rhs){
             return static_cast <bool> (*this || rhs);
         }
 
         // Comparison Operators
-        constexpr bool operator==(const uint128_t & rhs) const;
+        BIGINT_CONSTEXPR bool operator==(const uint128_t & rhs) const;
 
         template <typename T> bool operator==(const T & rhs) const{
             return (!UPPER && (LOWER == (uint64_t) rhs));
         }
 
-        constexpr bool operator!=(const uint128_t & rhs) const;
+        BIGINT_CONSTEXPR bool operator!=(const uint128_t & rhs) const;
 
-        template <typename T> constexpr bool operator!=(const T & rhs) const{
+        template <typename T> BIGINT_CONSTEXPR bool operator!=(const T & rhs) const{
             return (UPPER | (LOWER != (uint64_t) rhs));
         }
 
-        constexpr bool operator>(const uint128_t & rhs) const;
+        BIGINT_CONSTEXPR bool operator>(const uint128_t & rhs) const;
 
-        template <typename T> constexpr bool operator>(const T & rhs) const{
+        template <typename T> BIGINT_CONSTEXPR bool operator>(const T & rhs) const{
             return (UPPER || (LOWER > (uint64_t) rhs));
         }
 
-        constexpr bool operator<(const uint128_t & rhs) const;
+        BIGINT_CONSTEXPR bool operator<(const uint128_t & rhs) const;
 
-        template <typename T> constexpr bool operator<(const T & rhs) const{
+        template <typename T> BIGINT_CONSTEXPR bool operator<(const T & rhs) const{
             return (!UPPER)?(LOWER < (uint64_t) rhs):false;
         }
 
-        constexpr bool operator>=(const uint128_t & rhs) const;
+        BIGINT_CONSTEXPR bool operator>=(const uint128_t & rhs) const;
 
         template <typename T> bool operator>=(const T & rhs) const{
             return ((*this > rhs) | (*this == rhs));
         }
 
-        constexpr bool operator<=(const uint128_t & rhs) const;
+        BIGINT_CONSTEXPR bool operator<=(const uint128_t & rhs) const;
 
-        template <typename T> constexpr bool operator<=(const T & rhs) const{
+        template <typename T> BIGINT_CONSTEXPR bool operator<=(const T & rhs) const{
             return ((*this < rhs) | (*this == rhs));
         }
 
         // Arithmetic Operators
-        constexpr uint128_t operator+(const uint128_t & rhs) const;
+        BIGINT_CONSTEXPR uint128_t operator+(const uint128_t & rhs) const;
 
-        template <typename T> constexpr uint128_t operator+(const T & rhs) const{
+        template <typename T> BIGINT_CONSTEXPR uint128_t operator+(const T & rhs) const{
             return uint128_t(UPPER + ((LOWER + (uint64_t) rhs) < LOWER), LOWER + (uint64_t) rhs);
         }
 
-        constexpr uint128_t & operator+=(const uint128_t & rhs);
+        BIGINT_CONSTEXPR uint128_t & operator+=(const uint128_t & rhs);
 
-        template <typename T> constexpr uint128_t & operator+=(const T & rhs){
+        template <typename T> BIGINT_CONSTEXPR uint128_t & operator+=(const T & rhs){
             UPPER = UPPER + ((LOWER + rhs) < LOWER);
             LOWER = LOWER + rhs;
             return *this;
         }
 
-        constexpr uint128_t operator-(const uint128_t & rhs) const;
+        BIGINT_CONSTEXPR uint128_t operator-(const uint128_t & rhs) const;
 
-        template <typename T> constexpr uint128_t operator-(const T & rhs) const{
+        template <typename T> BIGINT_CONSTEXPR uint128_t operator-(const T & rhs) const{
             return uint128_t((uint64_t) (UPPER - ((LOWER - rhs) > LOWER)), (uint64_t) (LOWER - rhs));
         }
 
-        constexpr uint128_t & operator-=(const uint128_t & rhs);
+        BIGINT_CONSTEXPR uint128_t & operator-=(const uint128_t & rhs);
 
-        template <typename T> constexpr uint128_t & operator-=(const T & rhs){
+        template <typename T> BIGINT_CONSTEXPR uint128_t & operator-=(const T & rhs){
             *this = *this - rhs;
             return *this;
         }
 
-        constexpr uint128_t operator*(const uint128_t & rhs) const;
+        BIGINT_CONSTEXPR uint128_t operator*(const uint128_t & rhs) const;
 
-        template <typename T> constexpr uint128_t operator*(const T & rhs) const{
+        template <typename T> BIGINT_CONSTEXPR uint128_t operator*(const T & rhs) const{
             return *this * uint128_t(rhs);
         }
 
-        constexpr uint128_t & operator*=(const uint128_t & rhs);
+        BIGINT_CONSTEXPR uint128_t & operator*=(const uint128_t & rhs);
 
-        template <typename T> constexpr uint128_t & operator*=(const T & rhs){
+        template <typename T> BIGINT_CONSTEXPR uint128_t & operator*=(const T & rhs){
             *this = *this * uint128_t(rhs);
             return *this;
         }
 
     private:
-        constexpr std::pair <uint128_t, uint128_t> divmod(const uint128_t & lhs, const uint128_t & rhs) const;
+        BIGINT_CONSTEXPR std::pair <uint128_t, uint128_t> divmod(const uint128_t & lhs, const uint128_t & rhs) const;
 
     public:
-		constexpr uint128_t operator/(const uint128_t & rhs) const;
+		BIGINT_CONSTEXPR uint128_t operator/(const uint128_t & rhs) const;
 
-        template <typename T> constexpr uint128_t operator/(const T & rhs) const{
+        template <typename T> BIGINT_CONSTEXPR uint128_t operator/(const T & rhs) const{
             return *this / uint128_t(rhs);
         }
 
-        constexpr uint128_t & operator/=(const uint128_t & rhs);
+        BIGINT_CONSTEXPR uint128_t & operator/=(const uint128_t & rhs);
 
-        template <typename T> constexpr uint128_t & operator/=(const T & rhs){
+        template <typename T> BIGINT_CONSTEXPR uint128_t & operator/=(const T & rhs){
             *this = *this / uint128_t(rhs);
             return *this;
         }
 
-        constexpr uint128_t operator%(const uint128_t & rhs) const;
+        BIGINT_CONSTEXPR uint128_t operator%(const uint128_t & rhs) const;
 
-        template <typename T> constexpr uint128_t operator%(const T & rhs) const{
+        template <typename T> BIGINT_CONSTEXPR uint128_t operator%(const T & rhs) const{
             return *this - (rhs * (*this / rhs));
         }
 
-        constexpr uint128_t & operator%=(const uint128_t & rhs);
+        BIGINT_CONSTEXPR uint128_t & operator%=(const uint128_t & rhs);
 
-        template <typename T> constexpr uint128_t & operator%=(const T & rhs){
+        template <typename T> BIGINT_CONSTEXPR uint128_t & operator%=(const T & rhs){
             *this = *this % uint128_t(rhs);
             return *this;
         }
 
         // Increment Operator
-        constexpr uint128_t & operator++();
-        constexpr uint128_t operator++(int);
+        BIGINT_CONSTEXPR uint128_t & operator++();
+        BIGINT_CONSTEXPR uint128_t operator++(int);
 
         // Decrement Operator
-        constexpr uint128_t & operator--();
-        constexpr uint128_t operator--(int);
+        BIGINT_CONSTEXPR uint128_t & operator--();
+        BIGINT_CONSTEXPR uint128_t operator--(int);
 
         // Nothing done since promotion doesn't work here
-        constexpr uint128_t operator+() const;
+        BIGINT_CONSTEXPR uint128_t operator+() const;
 
         // two's complement
-        constexpr uint128_t operator-() const;
+        BIGINT_CONSTEXPR uint128_t operator-() const;
 
         // Get private values
-        constexpr const uint64_t & upper() const;
-        constexpr const uint64_t & lower() const;
+        BIGINT_CONSTEXPR const uint64_t & upper() const;
+        BIGINT_CONSTEXPR const uint64_t & lower() const;
 
         // Get bitsize of value
-        constexpr uint8_t bits() const;
+        BIGINT_CONSTEXPR bigint_u32type bits() const;
 
         // Get string representation of value
         std::string str(uint8_t base = 10, const unsigned int & len = 0) const;
@@ -316,87 +318,87 @@ namespace std {  // This is probably not a good idea
 // If the output is not a bool, casts to type T
 
 // Bitwise Operators
-template <typename T> constexpr uint128_t operator&(const T & lhs, const uint128_t & rhs){
+template <typename T> BIGINT_CONSTEXPR uint128_t operator&(const T & lhs, const uint128_t & rhs){
     return rhs & lhs;
 }
 
-template <typename T> constexpr T & operator&=(T & lhs, const uint128_t & rhs){
+template <typename T> BIGINT_CONSTEXPR T & operator&=(T & lhs, const uint128_t & rhs){
     return lhs = static_cast <T> (rhs & lhs);
 }
 
-template <typename T> constexpr uint128_t operator|(const T & lhs, const uint128_t & rhs){
+template <typename T> BIGINT_CONSTEXPR uint128_t operator|(const T & lhs, const uint128_t & rhs){
     return rhs | lhs;
 }
 
-template <typename T> constexpr T & operator|=(T & lhs, const uint128_t & rhs){
+template <typename T> BIGINT_CONSTEXPR T & operator|=(T & lhs, const uint128_t & rhs){
     return lhs = static_cast <T> (rhs | lhs);
 }
 
-template <typename T> constexpr uint128_t operator^(const T & lhs, const uint128_t & rhs){
+template <typename T> BIGINT_CONSTEXPR uint128_t operator^(const T & lhs, const uint128_t & rhs){
     return rhs ^ lhs;
 }
 
-template <typename T> constexpr T & operator^=(T & lhs, const uint128_t & rhs){
+template <typename T> BIGINT_CONSTEXPR T & operator^=(T & lhs, const uint128_t & rhs){
     return lhs = static_cast <T> (rhs ^ lhs);
 }
 
 // Bitshift operators
-constexpr uint128_t operator<<(const bool     & lhs, const uint128_t & rhs);
-constexpr uint128_t operator<<(const uint8_t  & lhs, const uint128_t & rhs);
-constexpr uint128_t operator<<(const uint16_t & lhs, const uint128_t & rhs);
-constexpr uint128_t operator<<(const uint32_t & lhs, const uint128_t & rhs);
-constexpr uint128_t operator<<(const uint64_t & lhs, const uint128_t & rhs);
-constexpr uint128_t operator<<(const int8_t   & lhs, const uint128_t & rhs);
-constexpr uint128_t operator<<(const int16_t  & lhs, const uint128_t & rhs);
-constexpr uint128_t operator<<(const int32_t  & lhs, const uint128_t & rhs);
-constexpr uint128_t operator<<(const int64_t  & lhs, const uint128_t & rhs);
+BIGINT_CONSTEXPR uint128_t operator<<(const bool     & lhs, const uint128_t & rhs);
+BIGINT_CONSTEXPR uint128_t operator<<(const uint8_t  & lhs, const uint128_t & rhs);
+BIGINT_CONSTEXPR uint128_t operator<<(const uint16_t & lhs, const uint128_t & rhs);
+BIGINT_CONSTEXPR uint128_t operator<<(const uint32_t & lhs, const uint128_t & rhs);
+BIGINT_CONSTEXPR uint128_t operator<<(const uint64_t & lhs, const uint128_t & rhs);
+BIGINT_CONSTEXPR uint128_t operator<<(const int8_t   & lhs, const uint128_t & rhs);
+BIGINT_CONSTEXPR uint128_t operator<<(const int16_t  & lhs, const uint128_t & rhs);
+BIGINT_CONSTEXPR uint128_t operator<<(const int32_t  & lhs, const uint128_t & rhs);
+BIGINT_CONSTEXPR uint128_t operator<<(const int64_t  & lhs, const uint128_t & rhs);
 
-template <typename T> constexpr T & operator<<=(T & lhs, const uint128_t & rhs){
+template <typename T> BIGINT_CONSTEXPR T & operator<<=(T & lhs, const uint128_t & rhs){
     return lhs = static_cast <T> (uint128_t(lhs) << rhs);
 }
 
-constexpr uint128_t operator>>(const bool     & lhs, const uint128_t & rhs);
-constexpr uint128_t operator>>(const uint8_t  & lhs, const uint128_t & rhs);
-constexpr uint128_t operator>>(const uint16_t & lhs, const uint128_t & rhs);
-constexpr uint128_t operator>>(const uint32_t & lhs, const uint128_t & rhs);
-constexpr uint128_t operator>>(const uint64_t & lhs, const uint128_t & rhs);
-constexpr uint128_t operator>>(const int8_t   & lhs, const uint128_t & rhs);
-constexpr uint128_t operator>>(const int16_t  & lhs, const uint128_t & rhs);
-constexpr uint128_t operator>>(const int32_t  & lhs, const uint128_t & rhs);
-constexpr uint128_t operator>>(const int64_t  & lhs, const uint128_t & rhs);
+BIGINT_CONSTEXPR uint128_t operator>>(const bool     & lhs, const uint128_t & rhs);
+BIGINT_CONSTEXPR uint128_t operator>>(const uint8_t  & lhs, const uint128_t & rhs);
+BIGINT_CONSTEXPR uint128_t operator>>(const uint16_t & lhs, const uint128_t & rhs);
+BIGINT_CONSTEXPR uint128_t operator>>(const uint32_t & lhs, const uint128_t & rhs);
+BIGINT_CONSTEXPR uint128_t operator>>(const uint64_t & lhs, const uint128_t & rhs);
+BIGINT_CONSTEXPR uint128_t operator>>(const int8_t   & lhs, const uint128_t & rhs);
+BIGINT_CONSTEXPR uint128_t operator>>(const int16_t  & lhs, const uint128_t & rhs);
+BIGINT_CONSTEXPR uint128_t operator>>(const int32_t  & lhs, const uint128_t & rhs);
+BIGINT_CONSTEXPR uint128_t operator>>(const int64_t  & lhs, const uint128_t & rhs);
 
-template <typename T> constexpr T & operator>>=(T & lhs, const uint128_t & rhs){
+template <typename T> BIGINT_CONSTEXPR T & operator>>=(T & lhs, const uint128_t & rhs){
     return lhs = static_cast <T> (uint128_t(lhs) >> rhs);
 }
 
 // Comparison Operators
-template <typename T> constexpr bool operator==(const T & lhs, const uint128_t & rhs){
+template <typename T> BIGINT_CONSTEXPR bool operator==(const T & lhs, const uint128_t & rhs){
     return (!rhs.upper() && ((uint64_t) lhs == rhs.lower()));
 }
 
-template <typename T> constexpr bool operator!=(const T & lhs, const uint128_t & rhs){
+template <typename T> BIGINT_CONSTEXPR bool operator!=(const T & lhs, const uint128_t & rhs){
     return (rhs.upper() | ((uint64_t) lhs != rhs.lower()));
 }
 
-template <typename T> constexpr bool operator>(const T & lhs, const uint128_t & rhs){
+template <typename T> BIGINT_CONSTEXPR bool operator>(const T & lhs, const uint128_t & rhs){
     return (!rhs.upper()) && ((uint64_t) lhs > rhs.lower());
 }
 
-template <typename T> constexpr bool operator<(const T & lhs, const uint128_t & rhs){
+template <typename T> BIGINT_CONSTEXPR bool operator<(const T & lhs, const uint128_t & rhs){
     if (rhs.upper()){
         return true;
     }
     return ((uint64_t) lhs < rhs.lower());
 }
 
-template <typename T> constexpr bool operator>=(const T & lhs, const uint128_t & rhs){
+template <typename T> BIGINT_CONSTEXPR bool operator>=(const T & lhs, const uint128_t & rhs){
     if (rhs.upper()){
         return false;
     }
     return ((uint64_t) lhs >= rhs.lower());
 }
 
-template <typename T> constexpr bool operator<=(const T & lhs, const uint128_t & rhs){
+template <typename T> BIGINT_CONSTEXPR bool operator<=(const T & lhs, const uint128_t & rhs){
     if (rhs.upper()){
         return true;
     }
@@ -404,43 +406,43 @@ template <typename T> constexpr bool operator<=(const T & lhs, const uint128_t &
 }
 
 // Arithmetic Operators
-template <typename T> constexpr uint128_t operator+(const T & lhs, const uint128_t & rhs){
+template <typename T> BIGINT_CONSTEXPR uint128_t operator+(const T & lhs, const uint128_t & rhs){
     return rhs + lhs;
 }
 
-template <typename T> constexpr T & operator+=(T & lhs, const uint128_t & rhs){
+template <typename T> BIGINT_CONSTEXPR T & operator+=(T & lhs, const uint128_t & rhs){
     return lhs = static_cast <T> (rhs + lhs);
 }
 
-template <typename T> constexpr uint128_t operator-(const T & lhs, const uint128_t & rhs){
+template <typename T> BIGINT_CONSTEXPR uint128_t operator-(const T & lhs, const uint128_t & rhs){
     return -(rhs - lhs);
 }
 
-template <typename T> constexpr T & operator-=(T & lhs, const uint128_t & rhs){
+template <typename T> BIGINT_CONSTEXPR T & operator-=(T & lhs, const uint128_t & rhs){
     return lhs = static_cast <T> (-(rhs - lhs));
 }
 
-template <typename T> constexpr uint128_t operator*(const T & lhs, const uint128_t & rhs){
+template <typename T> BIGINT_CONSTEXPR uint128_t operator*(const T & lhs, const uint128_t & rhs){
     return rhs * lhs;
 }
 
-template <typename T> constexpr T & operator*=(T & lhs, const uint128_t & rhs){
+template <typename T> BIGINT_CONSTEXPR T & operator*=(T & lhs, const uint128_t & rhs){
     return lhs = static_cast <T> (rhs * lhs);
 }
 
-template <typename T> constexpr uint128_t operator/(const T & lhs, const uint128_t & rhs){
+template <typename T> BIGINT_CONSTEXPR uint128_t operator/(const T & lhs, const uint128_t & rhs){
     return uint128_t(lhs) / rhs;
 }
 
-template <typename T> constexpr T & operator/=(T & lhs, const uint128_t & rhs){
+template <typename T> BIGINT_CONSTEXPR T & operator/=(T & lhs, const uint128_t & rhs){
     return lhs = static_cast <T> (uint128_t(lhs) / rhs);
 }
 
-template <typename T> constexpr uint128_t operator%(const T & lhs, const uint128_t & rhs){
+template <typename T> BIGINT_CONSTEXPR uint128_t operator%(const T & lhs, const uint128_t & rhs){
     return uint128_t(lhs) % rhs;
 }
 
-template <typename T> constexpr T & operator%=(T & lhs, const uint128_t & rhs){
+template <typename T> BIGINT_CONSTEXPR T & operator%=(T & lhs, const uint128_t & rhs){
     return lhs = static_cast <T> (uint128_t(lhs) % rhs);
 }
 
@@ -448,15 +450,15 @@ template <typename T> constexpr T & operator%=(T & lhs, const uint128_t & rhs){
 std::ostream & operator<<(std::ostream & stream, const uint128_t & rhs);
 
 
-constexpr uint128_t::uint128_t()
+BIGINT_CONSTEXPR uint128_t::uint128_t()
     : UPPER(0), LOWER(0)
 {}
 
-constexpr uint128_t::uint128_t(const uint128_t & rhs)
+BIGINT_CONSTEXPR uint128_t::uint128_t(const uint128_t & rhs)
     : UPPER(rhs.UPPER), LOWER(rhs.LOWER)
 {}
 
-constexpr uint128_t::uint128_t(uint128_t && rhs)
+BIGINT_CONSTEXPR uint128_t::uint128_t(uint128_t && rhs)
     : UPPER(std::move(rhs.UPPER)), LOWER(std::move(rhs.LOWER))
 {
     if (this != &rhs){
@@ -464,19 +466,19 @@ constexpr uint128_t::uint128_t(uint128_t && rhs)
         rhs.LOWER = 0;
     }
 }
-constexpr uint128_t uint128_0 = 0;
-constexpr uint128_t uint128_1 = 1;
+BIGINT_CONSTEXPR uint128_t uint128_0 = 0;
+BIGINT_CONSTEXPR uint128_t uint128_1 = 1;
 
-constexpr uint128_t uint128_64(64);
-constexpr uint128_t uint128_128(128);
-constexpr uint128_t uint128_256(256);
-constexpr uint128_t uint128_t::operator=(const uint128_t & rhs){
+BIGINT_CONSTEXPR uint128_t uint128_64(64);
+BIGINT_CONSTEXPR uint128_t uint128_128(128);
+BIGINT_CONSTEXPR uint128_t uint128_256(256);
+BIGINT_CONSTEXPR uint128_t uint128_t::operator=(const uint128_t & rhs){
     UPPER = rhs.UPPER;
     LOWER = rhs.LOWER;
     return *this;
 }
 
-constexpr uint128_t uint128_t::operator=(uint128_t && rhs){
+BIGINT_CONSTEXPR uint128_t uint128_t::operator=(uint128_t && rhs){
     if (this != &rhs){
         UPPER = std::move(rhs.UPPER);
         LOWER = std::move(rhs.LOWER);
@@ -486,61 +488,61 @@ constexpr uint128_t uint128_t::operator=(uint128_t && rhs){
     return *this;
 }
 
-constexpr uint128_t::operator bool() const{
+BIGINT_CONSTEXPR uint128_t::operator bool() const{
     return (bool) (UPPER | LOWER);
 }
 
-constexpr uint128_t::operator uint8_t() const{
+BIGINT_CONSTEXPR uint128_t::operator uint8_t() const{
     return (uint8_t) LOWER;
 }
 
-constexpr uint128_t::operator uint16_t() const{
+BIGINT_CONSTEXPR uint128_t::operator uint16_t() const{
     return (uint16_t) LOWER;
 }
 
-constexpr uint128_t::operator uint32_t() const{
+BIGINT_CONSTEXPR uint128_t::operator uint32_t() const{
     return (uint32_t) LOWER;
 }
 
-constexpr uint128_t::operator uint64_t() const{
+BIGINT_CONSTEXPR uint128_t::operator uint64_t() const{
     return (uint64_t) LOWER;
 }
 
-constexpr uint128_t uint128_t::operator&(const uint128_t & rhs) const{
+BIGINT_CONSTEXPR uint128_t uint128_t::operator&(const uint128_t & rhs) const{
     return uint128_t(UPPER & rhs.UPPER, LOWER & rhs.LOWER);
 }
 
-constexpr uint128_t & uint128_t::operator&=(const uint128_t & rhs){
+BIGINT_CONSTEXPR uint128_t & uint128_t::operator&=(const uint128_t & rhs){
     UPPER &= rhs.UPPER;
     LOWER &= rhs.LOWER;
     return *this;
 }
 
-constexpr uint128_t uint128_t::operator|(const uint128_t & rhs) const{
+BIGINT_CONSTEXPR uint128_t uint128_t::operator|(const uint128_t & rhs) const{
     return uint128_t(UPPER | rhs.UPPER, LOWER | rhs.LOWER);
 }
 
-constexpr uint128_t & uint128_t::operator|=(const uint128_t & rhs){
+BIGINT_CONSTEXPR uint128_t & uint128_t::operator|=(const uint128_t & rhs){
     UPPER |= rhs.UPPER;
     LOWER |= rhs.LOWER;
     return *this;
 }
 
-constexpr uint128_t uint128_t::operator^(const uint128_t & rhs) const{
+BIGINT_CONSTEXPR uint128_t uint128_t::operator^(const uint128_t & rhs) const{
     return uint128_t(UPPER ^ rhs.UPPER, LOWER ^ rhs.LOWER);
 }
 
-constexpr uint128_t & uint128_t::operator^=(const uint128_t & rhs){
+BIGINT_CONSTEXPR uint128_t & uint128_t::operator^=(const uint128_t & rhs){
     UPPER ^= rhs.UPPER;
     LOWER ^= rhs.LOWER;
     return *this;
 }
 
-constexpr uint128_t uint128_t::operator~() const{
+BIGINT_CONSTEXPR uint128_t uint128_t::operator~() const{
     return uint128_t(~UPPER, ~LOWER);
 }
 
-constexpr uint128_t uint128_t::operator<<(const uint128_t & rhs) const{
+BIGINT_CONSTEXPR uint128_t uint128_t::operator<<(const uint128_t & rhs) const{
     const uint64_t shift = rhs.LOWER;
     if (((bool) rhs.UPPER) || (shift >= 128)){
         return uint128_0;
@@ -562,12 +564,12 @@ constexpr uint128_t uint128_t::operator<<(const uint128_t & rhs) const{
     }
 }
 
-constexpr uint128_t & uint128_t::operator<<=(const uint128_t & rhs){
+BIGINT_CONSTEXPR uint128_t & uint128_t::operator<<=(const uint128_t & rhs){
     *this = *this << rhs;
     return *this;
 }
 
-constexpr uint128_t uint128_t::operator>>(const uint128_t & rhs) const{
+BIGINT_CONSTEXPR uint128_t uint128_t::operator>>(const uint128_t & rhs) const{
     const uint64_t shift = rhs.LOWER;
     if (((bool) rhs.UPPER) || (shift >= 128)){
         return uint128_0;
@@ -589,73 +591,73 @@ constexpr uint128_t uint128_t::operator>>(const uint128_t & rhs) const{
     }
 }
 
-constexpr uint128_t & uint128_t::operator>>=(const uint128_t & rhs){
+BIGINT_CONSTEXPR uint128_t & uint128_t::operator>>=(const uint128_t & rhs){
     *this = *this >> rhs;
     return *this;
 }
 
-constexpr bool uint128_t::operator!() const{
+BIGINT_CONSTEXPR bool uint128_t::operator!() const{
     return !(bool) (UPPER | LOWER);
 }
 
-constexpr bool uint128_t::operator&&(const uint128_t & rhs) const{
+BIGINT_CONSTEXPR bool uint128_t::operator&&(const uint128_t & rhs) const{
     return ((bool) *this && rhs);
 }
 
-constexpr bool uint128_t::operator||(const uint128_t & rhs) const{
+BIGINT_CONSTEXPR bool uint128_t::operator||(const uint128_t & rhs) const{
      return ((bool) *this || rhs);
 }
 
-constexpr bool uint128_t::operator==(const uint128_t & rhs) const{
+BIGINT_CONSTEXPR bool uint128_t::operator==(const uint128_t & rhs) const{
     return ((UPPER == rhs.UPPER) && (LOWER == rhs.LOWER));
 }
 
-constexpr bool uint128_t::operator!=(const uint128_t & rhs) const{
+BIGINT_CONSTEXPR bool uint128_t::operator!=(const uint128_t & rhs) const{
     return ((UPPER != rhs.UPPER) | (LOWER != rhs.LOWER));
 }
 
-constexpr bool uint128_t::operator>(const uint128_t & rhs) const{
+BIGINT_CONSTEXPR bool uint128_t::operator>(const uint128_t & rhs) const{
     if (UPPER == rhs.UPPER){
         return (LOWER > rhs.LOWER);
     }
     return (UPPER > rhs.UPPER);
 }
 
-constexpr bool uint128_t::operator<(const uint128_t & rhs) const{
+BIGINT_CONSTEXPR bool uint128_t::operator<(const uint128_t & rhs) const{
     if (UPPER == rhs.UPPER){
         return (LOWER < rhs.LOWER);
     }
     return (UPPER < rhs.UPPER);
 }
 
-constexpr bool uint128_t::operator>=(const uint128_t & rhs) const{
+BIGINT_CONSTEXPR bool uint128_t::operator>=(const uint128_t & rhs) const{
     return ((*this > rhs) | (*this == rhs));
 }
 
-constexpr bool uint128_t::operator<=(const uint128_t & rhs) const{
+BIGINT_CONSTEXPR bool uint128_t::operator<=(const uint128_t & rhs) const{
     return ((*this < rhs) | (*this == rhs));
 }
 
-constexpr uint128_t uint128_t::operator+(const uint128_t & rhs) const{
+BIGINT_CONSTEXPR uint128_t uint128_t::operator+(const uint128_t & rhs) const{
     return uint128_t(UPPER + rhs.UPPER + ((LOWER + rhs.LOWER) < LOWER), LOWER + rhs.LOWER);
 }
 
-constexpr uint128_t & uint128_t::operator+=(const uint128_t & rhs){
+BIGINT_CONSTEXPR uint128_t & uint128_t::operator+=(const uint128_t & rhs){
     UPPER += rhs.UPPER + ((LOWER + rhs.LOWER) < LOWER);
     LOWER += rhs.LOWER;
     return *this;
 }
 
-constexpr uint128_t uint128_t::operator-(const uint128_t & rhs) const{
+BIGINT_CONSTEXPR uint128_t uint128_t::operator-(const uint128_t & rhs) const{
     return uint128_t(UPPER - rhs.UPPER - ((LOWER - rhs.LOWER) > LOWER), LOWER - rhs.LOWER);
 }
 
-constexpr uint128_t & uint128_t::operator-=(const uint128_t & rhs){
+BIGINT_CONSTEXPR uint128_t & uint128_t::operator-=(const uint128_t & rhs){
     *this = *this - rhs;
     return *this;
 }
 
-constexpr uint128_t uint128_t::operator*(const uint128_t & rhs) const{
+BIGINT_CONSTEXPR uint128_t uint128_t::operator*(const uint128_t & rhs) const{
     // split values into 4 32-bit parts
     uint64_t top[4] = {UPPER >> 32, UPPER & 0xffffffff, LOWER >> 32, LOWER & 0xffffffff};
     uint64_t bottom[4] = {rhs.UPPER >> 32, rhs.UPPER & 0xffffffff, rhs.LOWER >> 32, rhs.LOWER & 0xffffffff};
@@ -701,13 +703,13 @@ constexpr uint128_t uint128_t::operator*(const uint128_t & rhs) const{
     return uint128_t((first32 << 32) | second32, (third32 << 32) | fourth32);
 }
 
-constexpr uint128_t & uint128_t::operator*=(const uint128_t & rhs){
+BIGINT_CONSTEXPR uint128_t & uint128_t::operator*=(const uint128_t & rhs){
     *this = *this * rhs;
     return *this;
 }
 
 std::pair <uint128_t, uint128_t> 
-constexpr uint128_t::divmod(const uint128_t & lhs, const uint128_t & rhs) const{
+BIGINT_CONSTEXPR uint128_t::divmod(const uint128_t & lhs, const uint128_t & rhs) const{
     // Save some calculations /////////////////////
     if (rhs == uint128_0){
         assume(false);
@@ -739,62 +741,62 @@ constexpr uint128_t::divmod(const uint128_t & lhs, const uint128_t & rhs) const{
     return qr;
 }
 
-constexpr uint128_t uint128_t::operator/(const uint128_t & rhs) const{
+BIGINT_CONSTEXPR uint128_t uint128_t::operator/(const uint128_t & rhs) const{
     return divmod(*this, rhs).first;
 }
 
-constexpr uint128_t & uint128_t::operator/=(const uint128_t & rhs){
+BIGINT_CONSTEXPR uint128_t & uint128_t::operator/=(const uint128_t & rhs){
     *this = *this / rhs;
     return *this;
 }
 
-constexpr uint128_t uint128_t::operator%(const uint128_t & rhs) const{
+BIGINT_CONSTEXPR uint128_t uint128_t::operator%(const uint128_t & rhs) const{
     return divmod(*this, rhs).second;
 }
 
-constexpr uint128_t & uint128_t::operator%=(const uint128_t & rhs){
+BIGINT_CONSTEXPR uint128_t & uint128_t::operator%=(const uint128_t & rhs){
     *this = *this % rhs;
     return *this;
 }
 
-constexpr uint128_t & uint128_t::operator++(){
+BIGINT_CONSTEXPR uint128_t & uint128_t::operator++(){
     return *this += uint128_1;
 }
 
-constexpr uint128_t uint128_t::operator++(int){
+BIGINT_CONSTEXPR uint128_t uint128_t::operator++(int){
     uint128_t temp(*this);
     ++*this;
     return temp;
 }
 
-constexpr uint128_t & uint128_t::operator--(){
+BIGINT_CONSTEXPR uint128_t & uint128_t::operator--(){
     return *this -= uint128_1;
 }
 
-constexpr uint128_t uint128_t::operator--(int){
+BIGINT_CONSTEXPR uint128_t uint128_t::operator--(int){
     uint128_t temp(*this);
     --*this;
     return temp;
 }
 
-constexpr uint128_t uint128_t::operator+() const{
+BIGINT_CONSTEXPR uint128_t uint128_t::operator+() const{
     return *this;
 }
 
-constexpr uint128_t uint128_t::operator-() const{
+BIGINT_CONSTEXPR uint128_t uint128_t::operator-() const{
     return ~*this + uint128_1;
 }
 
-constexpr const uint64_t & uint128_t::upper() const{
+BIGINT_CONSTEXPR const uint64_t & uint128_t::upper() const{
     return UPPER;
 }
 
-constexpr const uint64_t & uint128_t::lower() const{
+BIGINT_CONSTEXPR const uint64_t & uint128_t::lower() const{
     return LOWER;
 }
 
-constexpr uint8_t uint128_t::bits() const{
-    uint8_t out = 0;
+BIGINT_CONSTEXPR bigint_u32type uint128_t::bits() const{
+    bigint_u32type out = 0;
     if (UPPER){
         out = 64;
         uint64_t up = UPPER;
@@ -834,75 +836,75 @@ std::string uint128_t::str(uint8_t base, const unsigned int & len) const{
     return out;
 }
 
-constexpr uint128_t operator<<(const bool & lhs, const uint128_t & rhs){
+BIGINT_CONSTEXPR uint128_t operator<<(const bool & lhs, const uint128_t & rhs){
     return uint128_t(lhs) << rhs;
 }
 
-constexpr uint128_t operator<<(const uint8_t & lhs, const uint128_t & rhs){
+BIGINT_CONSTEXPR uint128_t operator<<(const uint8_t & lhs, const uint128_t & rhs){
     return uint128_t(lhs) << rhs;
 }
 
-constexpr uint128_t operator<<(const uint16_t & lhs, const uint128_t & rhs){
+BIGINT_CONSTEXPR uint128_t operator<<(const uint16_t & lhs, const uint128_t & rhs){
     return uint128_t(lhs) << rhs;
 }
 
-constexpr uint128_t operator<<(const uint32_t & lhs, const uint128_t & rhs){
+BIGINT_CONSTEXPR uint128_t operator<<(const uint32_t & lhs, const uint128_t & rhs){
     return uint128_t(lhs) << rhs;
 }
 
-constexpr uint128_t operator<<(const uint64_t & lhs, const uint128_t & rhs){
+BIGINT_CONSTEXPR uint128_t operator<<(const uint64_t & lhs, const uint128_t & rhs){
     return uint128_t(lhs) << rhs;
 }
 
-constexpr uint128_t operator<<(const int8_t & lhs, const uint128_t & rhs){
+BIGINT_CONSTEXPR uint128_t operator<<(const int8_t & lhs, const uint128_t & rhs){
     return uint128_t(lhs) << rhs;
 }
 
-constexpr uint128_t operator<<(const int16_t & lhs, const uint128_t & rhs){
+BIGINT_CONSTEXPR uint128_t operator<<(const int16_t & lhs, const uint128_t & rhs){
     return uint128_t(lhs) << rhs;
 }
 
-constexpr uint128_t operator<<(const int32_t & lhs, const uint128_t & rhs){
+BIGINT_CONSTEXPR uint128_t operator<<(const int32_t & lhs, const uint128_t & rhs){
     return uint128_t(lhs) << rhs;
 }
 
-constexpr uint128_t operator<<(const int64_t & lhs, const uint128_t & rhs){
+BIGINT_CONSTEXPR uint128_t operator<<(const int64_t & lhs, const uint128_t & rhs){
     return uint128_t(lhs) << rhs;
 }
 
-constexpr uint128_t operator>>(const bool & lhs, const uint128_t & rhs){
+BIGINT_CONSTEXPR uint128_t operator>>(const bool & lhs, const uint128_t & rhs){
     return uint128_t(lhs) >> rhs;
 }
 
-constexpr uint128_t operator>>(const uint8_t & lhs, const uint128_t & rhs){
+BIGINT_CONSTEXPR uint128_t operator>>(const uint8_t & lhs, const uint128_t & rhs){
     return uint128_t(lhs) >> rhs;
 }
 
-constexpr uint128_t operator>>(const uint16_t & lhs, const uint128_t & rhs){
+BIGINT_CONSTEXPR uint128_t operator>>(const uint16_t & lhs, const uint128_t & rhs){
     return uint128_t(lhs) >> rhs;
 }
 
-constexpr uint128_t operator>>(const uint32_t & lhs, const uint128_t & rhs){
+BIGINT_CONSTEXPR uint128_t operator>>(const uint32_t & lhs, const uint128_t & rhs){
     return uint128_t(lhs) >> rhs;
 }
 
-constexpr uint128_t operator>>(const uint64_t & lhs, const uint128_t & rhs){
+BIGINT_CONSTEXPR uint128_t operator>>(const uint64_t & lhs, const uint128_t & rhs){
     return uint128_t(lhs) >> rhs;
 }
 
-constexpr uint128_t operator>>(const int8_t & lhs, const uint128_t & rhs){
+BIGINT_CONSTEXPR uint128_t operator>>(const int8_t & lhs, const uint128_t & rhs){
     return uint128_t(lhs) >> rhs;
 }
 
-constexpr uint128_t operator>>(const int16_t & lhs, const uint128_t & rhs){
+BIGINT_CONSTEXPR uint128_t operator>>(const int16_t & lhs, const uint128_t & rhs){
     return uint128_t(lhs) >> rhs;
 }
 
-constexpr uint128_t operator>>(const int32_t & lhs, const uint128_t & rhs){
+BIGINT_CONSTEXPR uint128_t operator>>(const int32_t & lhs, const uint128_t & rhs){
     return uint128_t(lhs) >> rhs;
 }
 
-constexpr uint128_t operator>>(const int64_t & lhs, const uint128_t & rhs){
+BIGINT_CONSTEXPR uint128_t operator>>(const int64_t & lhs, const uint128_t & rhs){
     return uint128_t(lhs) >> rhs;
 }
 
@@ -924,297 +926,297 @@ class uint256_t{
 
     public:
         // Constructors
-        constexpr uint256_t();
-        constexpr uint256_t(const uint256_t & rhs);
-        constexpr uint256_t(uint256_t && rhs);
+        BIGINT_CONSTEXPR uint256_t();
+        BIGINT_CONSTEXPR uint256_t(const uint256_t & rhs);
+        BIGINT_CONSTEXPR uint256_t(uint256_t && rhs);
 
-        template <typename T> constexpr uint256_t(const T & rhs)
+        template <typename T> BIGINT_CONSTEXPR uint256_t(const T & rhs)
             : UPPER(uint128_0), LOWER(rhs)
         {
-            static_assert(std::is_integral <T>::value, "Input argument type must be an integer.");
+            //static_assert(std::is_integral <T>::value, "Input argument type must be an integer.");
         }
 
-        template <typename S, typename T> constexpr uint256_t(const S & upper_rhs, const T & lower_rhs)
+        template <typename S, typename T> BIGINT_CONSTEXPR uint256_t(const S & upper_rhs, const T & lower_rhs)
             : UPPER(upper_rhs), LOWER(lower_rhs)
         {
-            static_assert(std::is_integral <S>::value &&
+            /*static_assert(std::is_integral <S>::value &&
                           std::is_integral <T>::value
-                          , "Input argument types must be integers.");
+                          , "Input argument types must be integers.");*/
         }
 
         template <typename R, typename S, typename T, typename U>
-        constexpr uint256_t(const R & upper_lhs, const S & lower_lhs, const T & upper_rhs, const U & lower_rhs)
+        BIGINT_CONSTEXPR uint256_t(const R & upper_lhs, const S & lower_lhs, const T & upper_rhs, const U & lower_rhs)
             : UPPER(upper_lhs, lower_lhs), LOWER(upper_rhs, lower_rhs)
         {
-            static_assert(std::is_integral <R>::value &&
+            /*static_assert(std::is_integral <R>::value &&
                           std::is_integral <S>::value &&
                           std::is_integral <T>::value &&
                           std::is_integral <U>::value
-                          , "Input argument types must be integers.");
+                          , "Input argument types must be integers.");*/
         }
 
         //  RHS input args only
 
         // Assignment Operator
-        constexpr uint256_t operator=(const uint256_t & rhs);
-        constexpr uint256_t operator=(uint256_t && rhs);
+        BIGINT_CONSTEXPR uint256_t operator=(const uint256_t & rhs);
+        BIGINT_CONSTEXPR uint256_t operator=(uint256_t && rhs);
 
-        template <typename T> constexpr uint256_t operator=(const T & rhs){
-            static_assert(std::is_integral <T>::value, "Input argument type must be an integer.");
+        template <typename T> BIGINT_CONSTEXPR uint256_t operator=(const T & rhs){
+          //  static_assert(std::is_integral <T>::value, "Input argument type must be an integer.");
             UPPER = uint128_0;
             LOWER = rhs;
             return *this;
         }
 
         // Typecast Operators
-        constexpr operator bool      () const;
-        constexpr operator uint8_t   () const;
-        constexpr operator uint16_t  () const;
-        constexpr operator uint32_t  () const;
-        constexpr operator uint64_t  () const;
-        constexpr operator uint128_t () const;
+        BIGINT_CONSTEXPR operator bool      () const;
+        BIGINT_CONSTEXPR operator uint8_t   () const;
+        BIGINT_CONSTEXPR operator uint16_t  () const;
+        BIGINT_CONSTEXPR operator uint32_t  () const;
+        BIGINT_CONSTEXPR operator uint64_t  () const;
+        BIGINT_CONSTEXPR operator uint128_t () const;
 
         // Bitwise Operators
-        constexpr uint256_t operator&(const uint128_t & rhs) const;
-        constexpr uint256_t operator&(const uint256_t & rhs) const;
+        BIGINT_CONSTEXPR uint256_t operator&(const uint128_t & rhs) const;
+        BIGINT_CONSTEXPR uint256_t operator&(const uint256_t & rhs) const;
 
-        template <typename T> constexpr uint256_t operator&(const T & rhs) const{
+        template <typename T> BIGINT_CONSTEXPR uint256_t operator&(const T & rhs) const{
             return uint256_t(uint128_0, LOWER & (uint128_t) rhs);
         }
 
-        constexpr uint256_t & operator&=(const uint128_t & rhs);
-        constexpr uint256_t & operator&=(const uint256_t & rhs);
+        BIGINT_CONSTEXPR uint256_t & operator&=(const uint128_t & rhs);
+        BIGINT_CONSTEXPR uint256_t & operator&=(const uint256_t & rhs);
 
-        template <typename T> constexpr uint256_t & operator&=(const T & rhs){
+        template <typename T> BIGINT_CONSTEXPR uint256_t & operator&=(const T & rhs){
             UPPER = uint128_0;
             LOWER &= rhs;
             return *this;
         }
 
-        constexpr uint256_t operator|(const uint128_t & rhs) const;
-        constexpr uint256_t operator|(const uint256_t & rhs) const;
+        BIGINT_CONSTEXPR uint256_t operator|(const uint128_t & rhs) const;
+        BIGINT_CONSTEXPR uint256_t operator|(const uint256_t & rhs) const;
 
-        template <typename T> constexpr uint256_t operator|(const T & rhs) const{
+        template <typename T> BIGINT_CONSTEXPR uint256_t operator|(const T & rhs) const{
             return uint256_t(UPPER, LOWER | uint128_t(rhs));
         }
 
-        constexpr uint256_t & operator|=(const uint128_t & rhs);
-        constexpr uint256_t & operator|=(const uint256_t & rhs);
+        BIGINT_CONSTEXPR uint256_t & operator|=(const uint128_t & rhs);
+        BIGINT_CONSTEXPR uint256_t & operator|=(const uint256_t & rhs);
 
-        template <typename T> constexpr uint256_t & operator|=(const T & rhs){
+        template <typename T> BIGINT_CONSTEXPR uint256_t & operator|=(const T & rhs){
             LOWER |= (uint128_t) rhs;
             return *this;
         }
 
-        constexpr uint256_t operator^(const uint128_t & rhs) const;
-        constexpr uint256_t operator^(const uint256_t & rhs) const;
+        BIGINT_CONSTEXPR uint256_t operator^(const uint128_t & rhs) const;
+        BIGINT_CONSTEXPR uint256_t operator^(const uint256_t & rhs) const;
 
-        template <typename T> constexpr uint256_t operator^(const T & rhs) const{
+        template <typename T> BIGINT_CONSTEXPR uint256_t operator^(const T & rhs) const{
             return uint256_t(UPPER, LOWER ^ (uint128_t) rhs);
         }
 
-        constexpr uint256_t & operator^=(const uint128_t & rhs);
-        constexpr uint256_t & operator^=(const uint256_t & rhs);
+        BIGINT_CONSTEXPR uint256_t & operator^=(const uint128_t & rhs);
+        BIGINT_CONSTEXPR uint256_t & operator^=(const uint256_t & rhs);
 
-        template <typename T> constexpr uint256_t & operator^=(const T & rhs){
+        template <typename T> BIGINT_CONSTEXPR uint256_t & operator^=(const T & rhs){
             LOWER ^= (uint128_t) rhs;
             return *this;
         }
 
-        constexpr uint256_t operator~() const;
+        BIGINT_CONSTEXPR uint256_t operator~() const;
 
         // Bit Shift Operators
-        constexpr uint256_t operator<<(const uint128_t & shift) const;
-        constexpr uint256_t operator<<(const uint256_t & shift) const;
+        BIGINT_CONSTEXPR uint256_t operator<<(const uint128_t & shift) const;
+        BIGINT_CONSTEXPR uint256_t operator<<(const uint256_t & shift) const;
 
-        template <typename T> constexpr uint256_t operator<<(const T & rhs) const{
+        template <typename T> BIGINT_CONSTEXPR uint256_t operator<<(const T & rhs) const{
             return *this << uint256_t(rhs);
         }
 
-        constexpr uint256_t & operator<<=(const uint128_t & shift);
-        constexpr uint256_t & operator<<=(const uint256_t & shift);
+        BIGINT_CONSTEXPR uint256_t & operator<<=(const uint128_t & shift);
+        BIGINT_CONSTEXPR uint256_t & operator<<=(const uint256_t & shift);
 
-        template <typename T> constexpr uint256_t & operator<<=(const T & rhs){
+        template <typename T> BIGINT_CONSTEXPR uint256_t & operator<<=(const T & rhs){
             *this = *this << uint256_t(rhs);
             return *this;
         }
 
-        constexpr uint256_t operator>>(const uint128_t & shift) const;
-        constexpr uint256_t operator>>(const uint256_t & shift) const;
+        BIGINT_CONSTEXPR uint256_t operator>>(const uint128_t & shift) const;
+        BIGINT_CONSTEXPR uint256_t operator>>(const uint256_t & shift) const;
 
-        template <typename T> constexpr uint256_t operator>>(const T & rhs) const{
+        template <typename T> BIGINT_CONSTEXPR uint256_t operator>>(const T & rhs) const{
             return *this >> uint256_t(rhs);
         }
 
-        constexpr uint256_t & operator>>=(const uint128_t & shift);
-        constexpr uint256_t & operator>>=(const uint256_t & shift);
+        BIGINT_CONSTEXPR uint256_t & operator>>=(const uint128_t & shift);
+        BIGINT_CONSTEXPR uint256_t & operator>>=(const uint256_t & shift);
 
-        template <typename T> constexpr uint256_t & operator>>=(const T & rhs){
+        template <typename T> BIGINT_CONSTEXPR uint256_t & operator>>=(const T & rhs){
             *this = *this >> uint256_t(rhs);
             return *this;
         }
 
         // Logical Operators
-        constexpr bool operator!() const;
+        BIGINT_CONSTEXPR bool operator!() const;
 
-        constexpr bool operator&&(const uint128_t & rhs) const;
-        constexpr bool operator&&(const uint256_t & rhs) const;
+        BIGINT_CONSTEXPR bool operator&&(const uint128_t & rhs) const;
+        BIGINT_CONSTEXPR bool operator&&(const uint256_t & rhs) const;
 
-        template <typename T> constexpr bool operator&&(const T & rhs) const{
+        template <typename T> BIGINT_CONSTEXPR bool operator&&(const T & rhs) const{
             return ((bool) *this && rhs);
         }
 
-        constexpr bool operator||(const uint128_t & rhs) const;
-        constexpr bool operator||(const uint256_t & rhs) const;
+        BIGINT_CONSTEXPR bool operator||(const uint128_t & rhs) const;
+        BIGINT_CONSTEXPR bool operator||(const uint256_t & rhs) const;
 
-        template <typename T> constexpr bool operator||(const T & rhs) const{
+        template <typename T> BIGINT_CONSTEXPR bool operator||(const T & rhs) const{
             return ((bool) *this || rhs);
         }
 
         // Comparison Operators
-        constexpr bool operator==(const uint128_t & rhs) const;
-        constexpr bool operator==(const uint256_t & rhs) const;
+        BIGINT_CONSTEXPR bool operator==(const uint128_t & rhs) const;
+        BIGINT_CONSTEXPR bool operator==(const uint256_t & rhs) const;
 
-        template <typename T> constexpr bool operator==(const T & rhs) const{
+        template <typename T> BIGINT_CONSTEXPR bool operator==(const T & rhs) const{
             return (!UPPER && (LOWER == uint128_t(rhs)));
         }
 
-        constexpr bool operator!=(const uint128_t & rhs) const;
-        constexpr bool operator!=(const uint256_t & rhs) const;
+        BIGINT_CONSTEXPR bool operator!=(const uint128_t & rhs) const;
+        BIGINT_CONSTEXPR bool operator!=(const uint256_t & rhs) const;
 
-        template <typename T> constexpr bool operator!=(const T & rhs) const{
+        template <typename T> BIGINT_CONSTEXPR bool operator!=(const T & rhs) const{
             return ((bool) UPPER | (LOWER != uint128_t(rhs)));
         }
 
-        constexpr bool operator>(const uint128_t & rhs) const;
-        constexpr bool operator>(const uint256_t & rhs) const;
+        BIGINT_CONSTEXPR bool operator>(const uint128_t & rhs) const;
+        BIGINT_CONSTEXPR bool operator>(const uint256_t & rhs) const;
 
-        template <typename T> constexpr bool operator>(const T & rhs) const{
+        template <typename T> BIGINT_CONSTEXPR bool operator>(const T & rhs) const{
             return ((bool) UPPER | (LOWER > uint128_t(rhs)));
         }
 
-        constexpr bool operator<(const uint128_t & rhs) const;
-        constexpr bool operator<(const uint256_t & rhs) const;
+        BIGINT_CONSTEXPR bool operator<(const uint128_t & rhs) const;
+        BIGINT_CONSTEXPR bool operator<(const uint256_t & rhs) const;
 
-        template <typename T> constexpr bool operator<(const T & rhs) const{
+        template <typename T> BIGINT_CONSTEXPR bool operator<(const T & rhs) const{
             return (!UPPER)?(LOWER < uint128_t(rhs)):false;
         }
 
-        constexpr bool operator>=(const uint128_t & rhs) const;
-        constexpr bool operator>=(const uint256_t & rhs) const;
+        BIGINT_CONSTEXPR bool operator>=(const uint128_t & rhs) const;
+        BIGINT_CONSTEXPR bool operator>=(const uint256_t & rhs) const;
 
-        template <typename T> constexpr bool operator>=(const T & rhs) const{
+        template <typename T> BIGINT_CONSTEXPR bool operator>=(const T & rhs) const{
             return ((*this > rhs) | (*this == rhs));
         }
 
-        constexpr bool operator<=(const uint128_t & rhs) const;
-        constexpr bool operator<=(const uint256_t & rhs) const;
+        BIGINT_CONSTEXPR bool operator<=(const uint128_t & rhs) const;
+        BIGINT_CONSTEXPR bool operator<=(const uint256_t & rhs) const;
 
-        template <typename T> constexpr bool operator<=(const T & rhs) const{
+        template <typename T> BIGINT_CONSTEXPR bool operator<=(const T & rhs) const{
             return ((*this < rhs) | (*this == rhs));
         }
 
         // Arithmetic Operators
-        constexpr uint256_t operator+(const uint128_t & rhs) const;
-        constexpr uint256_t operator+(const uint256_t & rhs) const;
+        BIGINT_CONSTEXPR uint256_t operator+(const uint128_t & rhs) const;
+        BIGINT_CONSTEXPR uint256_t operator+(const uint256_t & rhs) const;
 
-        template <typename T> constexpr uint256_t operator+(const T & rhs) const{
+        template <typename T> BIGINT_CONSTEXPR uint256_t operator+(const T & rhs) const{
             return uint256_t(UPPER + ((LOWER + (uint128_t) rhs) < LOWER), LOWER + (uint128_t) rhs);
         }
 
-        constexpr uint256_t & operator+=(const uint128_t & rhs);
-        constexpr uint256_t & operator+=(const uint256_t & rhs);
+        BIGINT_CONSTEXPR uint256_t & operator+=(const uint128_t & rhs);
+        BIGINT_CONSTEXPR uint256_t & operator+=(const uint256_t & rhs);
 
-        template <typename T> constexpr uint256_t & operator+=(const T & rhs){
+        template <typename T> BIGINT_CONSTEXPR uint256_t & operator+=(const T & rhs){
             UPPER = UPPER + ((LOWER + rhs) < LOWER);
             LOWER = LOWER + rhs;
             return *this;
         }
 
-        constexpr uint256_t operator-(const uint128_t & rhs) const;
-        constexpr uint256_t operator-(const uint256_t & rhs) const;
+        BIGINT_CONSTEXPR uint256_t operator-(const uint128_t & rhs) const;
+        BIGINT_CONSTEXPR uint256_t operator-(const uint256_t & rhs) const;
 
-        template <typename T> constexpr uint256_t operator-(const T & rhs) const{
+        template <typename T> BIGINT_CONSTEXPR uint256_t operator-(const T & rhs) const{
             return uint256_t(UPPER - ((LOWER - rhs) > LOWER), LOWER - rhs);
         }
 
-        constexpr uint256_t & operator-=(const uint128_t & rhs);
-        constexpr uint256_t & operator-=(const uint256_t & rhs);
+        BIGINT_CONSTEXPR uint256_t & operator-=(const uint128_t & rhs);
+        BIGINT_CONSTEXPR uint256_t & operator-=(const uint256_t & rhs);
 
-        template <typename T> constexpr uint256_t & operator-=(const T & rhs){
+        template <typename T> BIGINT_CONSTEXPR uint256_t & operator-=(const T & rhs){
             *this = *this - rhs;
             return *this;
         }
 
-        constexpr uint256_t operator*(const uint128_t & rhs) const;
-        constexpr uint256_t operator*(const uint256_t & rhs) const;
+        BIGINT_CONSTEXPR uint256_t operator*(const uint128_t & rhs) const;
+        BIGINT_CONSTEXPR uint256_t operator*(const uint256_t & rhs) const;
 
-        template <typename T> constexpr uint256_t operator*(const T & rhs) const{
+        template <typename T> BIGINT_CONSTEXPR uint256_t operator*(const T & rhs) const{
             return *this * uint256_t(rhs);
         }
 
-        constexpr uint256_t & operator*=(const uint128_t & rhs);
-        constexpr uint256_t & operator*=(const uint256_t & rhs);
+        BIGINT_CONSTEXPR uint256_t & operator*=(const uint128_t & rhs);
+        BIGINT_CONSTEXPR uint256_t & operator*=(const uint256_t & rhs);
 
-        template <typename T> constexpr uint256_t & operator*=(const T & rhs){
+        template <typename T> BIGINT_CONSTEXPR uint256_t & operator*=(const T & rhs){
             *this = *this * uint256_t(rhs);
             return *this;
         }
 
     private:
-        constexpr std::pair <uint256_t, uint256_t> divmod(const uint256_t & lhs, const uint256_t & rhs) const;
+        BIGINT_CONSTEXPR std::pair <uint256_t, uint256_t> divmod(const uint256_t & lhs, const uint256_t & rhs) const;
 
     public:
-        constexpr uint256_t operator/(const uint128_t & rhs) const;
-        constexpr uint256_t operator/(const uint256_t & rhs) const;
+        BIGINT_CONSTEXPR uint256_t operator/(const uint128_t & rhs) const;
+        BIGINT_CONSTEXPR uint256_t operator/(const uint256_t & rhs) const;
 
-        template <typename T> constexpr uint256_t operator/(const T & rhs) const{
+        template <typename T> BIGINT_CONSTEXPR uint256_t operator/(const T & rhs) const{
             return *this / uint256_t(rhs);
         }
 
-        constexpr uint256_t & operator/=(const uint128_t & rhs);
-        constexpr uint256_t & operator/=(const uint256_t & rhs);
+        BIGINT_CONSTEXPR uint256_t & operator/=(const uint128_t & rhs);
+        BIGINT_CONSTEXPR uint256_t & operator/=(const uint256_t & rhs);
 
-        template <typename T> constexpr uint256_t & operator/=(const T & rhs){
+        template <typename T> BIGINT_CONSTEXPR uint256_t & operator/=(const T & rhs){
             *this = *this / uint256_t(rhs);
             return *this;
         }
 
-        constexpr uint256_t operator%(const uint128_t & rhs) const;
-        constexpr uint256_t operator%(const uint256_t & rhs) const;
+        BIGINT_CONSTEXPR uint256_t operator%(const uint128_t & rhs) const;
+        BIGINT_CONSTEXPR uint256_t operator%(const uint256_t & rhs) const;
 
-        template <typename T> constexpr uint256_t operator%(const T & rhs) const{
+        template <typename T> BIGINT_CONSTEXPR uint256_t operator%(const T & rhs) const{
             return *this % uint256_t(rhs);
         }
 
-        constexpr uint256_t & operator%=(const uint128_t & rhs);
-        constexpr uint256_t & operator%=(const uint256_t & rhs);
+        BIGINT_CONSTEXPR uint256_t & operator%=(const uint128_t & rhs);
+        BIGINT_CONSTEXPR uint256_t & operator%=(const uint256_t & rhs);
 
-        template <typename T> constexpr uint256_t & operator%=(const T & rhs){
+        template <typename T> BIGINT_CONSTEXPR uint256_t & operator%=(const T & rhs){
             *this = *this % uint256_t(rhs);
             return *this;
         }
 
         // Increment Operators
-        constexpr uint256_t & operator++();
-        constexpr uint256_t operator++(int);
+        BIGINT_CONSTEXPR uint256_t & operator++();
+        BIGINT_CONSTEXPR uint256_t operator++(int);
 
         // Decrement Operators
-        constexpr uint256_t & operator--();
-        constexpr uint256_t operator--(int);
+        BIGINT_CONSTEXPR uint256_t & operator--();
+        BIGINT_CONSTEXPR uint256_t operator--(int);
 
         // Nothing done since promotion doesn't work here
-        constexpr uint256_t operator+() const;
+        BIGINT_CONSTEXPR uint256_t operator+() const;
 
         // two's complement
-        constexpr uint256_t operator-() const;
+        BIGINT_CONSTEXPR uint256_t operator-() const;
 
         // Get private values
-        constexpr const uint128_t & upper() const;
-        constexpr const uint128_t & lower() const;
+        BIGINT_CONSTEXPR const uint128_t & upper() const;
+        BIGINT_CONSTEXPR const uint128_t & lower() const;
 
         // Get bitsize of value
-        constexpr uint16_t bits() const;
+        BIGINT_CONSTEXPR bigint_u32type bits() const;
 
         // Get string representation of value
         std::string str(uint8_t base = 10, const unsigned int & len = 0) const;
@@ -1230,189 +1232,189 @@ namespace std {  // This is probably not a good idea
 
 
 // Bitwise Operators
-constexpr uint256_t operator&(const uint128_t & lhs, const uint256_t & rhs);
+BIGINT_CONSTEXPR uint256_t operator&(const uint128_t & lhs, const uint256_t & rhs);
 
-template <typename T> constexpr uint256_t operator&(const T & lhs, const uint256_t & rhs){
+template <typename T> BIGINT_CONSTEXPR uint256_t operator&(const T & lhs, const uint256_t & rhs){
     return rhs & lhs;
 }
 
-constexpr uint128_t & operator&=(uint128_t & lhs, const uint256_t & rhs);
+BIGINT_CONSTEXPR uint128_t & operator&=(uint128_t & lhs, const uint256_t & rhs);
 
-template <typename T> constexpr T & operator&=(T & lhs, const uint256_t & rhs){
+template <typename T> BIGINT_CONSTEXPR T & operator&=(T & lhs, const uint256_t & rhs){
     return lhs = static_cast <T> (rhs & lhs);
 }
 
-constexpr uint256_t operator|(const uint128_t & lhs, const uint256_t & rhs);
+BIGINT_CONSTEXPR uint256_t operator|(const uint128_t & lhs, const uint256_t & rhs);
 
-template <typename T> constexpr uint256_t operator|(const T & lhs, const uint256_t & rhs){
+template <typename T> BIGINT_CONSTEXPR uint256_t operator|(const T & lhs, const uint256_t & rhs){
     return rhs | lhs;
 }
 
-constexpr uint128_t & operator|=(uint128_t & lhs, const uint256_t & rhs);
+BIGINT_CONSTEXPR uint128_t & operator|=(uint128_t & lhs, const uint256_t & rhs);
 
-template <typename T> constexpr T & operator|=(T & lhs, const uint256_t & rhs){
+template <typename T> BIGINT_CONSTEXPR T & operator|=(T & lhs, const uint256_t & rhs){
     return lhs = static_cast <T> (rhs | lhs);
 }
 
-constexpr uint256_t operator^(const uint128_t & lhs, const uint256_t & rhs);
+BIGINT_CONSTEXPR uint256_t operator^(const uint128_t & lhs, const uint256_t & rhs);
 
-template <typename T> constexpr uint256_t operator^(const T & lhs, const uint256_t & rhs){
+template <typename T> BIGINT_CONSTEXPR uint256_t operator^(const T & lhs, const uint256_t & rhs){
     return rhs ^ lhs;
 }
 
-constexpr uint128_t & operator^=(uint128_t & lhs, const uint256_t & rhs);
+BIGINT_CONSTEXPR uint128_t & operator^=(uint128_t & lhs, const uint256_t & rhs);
 
-template <typename T> constexpr T & operator^=(T & lhs, const uint256_t & rhs){
+template <typename T> BIGINT_CONSTEXPR T & operator^=(T & lhs, const uint256_t & rhs){
     return lhs = static_cast <T> (rhs ^ lhs);
 }
 
 // Bitshift operators
-constexpr uint256_t operator<<(const bool      & lhs, const uint256_t & rhs);
-constexpr uint256_t operator<<(const uint8_t   & lhs, const uint256_t & rhs);
-constexpr uint256_t operator<<(const uint16_t  & lhs, const uint256_t & rhs);
-constexpr uint256_t operator<<(const uint32_t  & lhs, const uint256_t & rhs);
-constexpr uint256_t operator<<(const uint64_t  & lhs, const uint256_t & rhs);
-constexpr uint256_t operator<<(const uint128_t & lhs, const uint256_t & rhs);
-constexpr uint256_t operator<<(const int8_t    & lhs, const uint256_t & rhs);
-constexpr uint256_t operator<<(const int16_t   & lhs, const uint256_t & rhs);
-constexpr uint256_t operator<<(const int32_t   & lhs, const uint256_t & rhs);
-constexpr uint256_t operator<<(const int64_t   & lhs, const uint256_t & rhs);
+BIGINT_CONSTEXPR uint256_t operator<<(const bool      & lhs, const uint256_t & rhs);
+BIGINT_CONSTEXPR uint256_t operator<<(const uint8_t   & lhs, const uint256_t & rhs);
+BIGINT_CONSTEXPR uint256_t operator<<(const uint16_t  & lhs, const uint256_t & rhs);
+BIGINT_CONSTEXPR uint256_t operator<<(const uint32_t  & lhs, const uint256_t & rhs);
+BIGINT_CONSTEXPR uint256_t operator<<(const uint64_t  & lhs, const uint256_t & rhs);
+BIGINT_CONSTEXPR uint256_t operator<<(const uint128_t & lhs, const uint256_t & rhs);
+BIGINT_CONSTEXPR uint256_t operator<<(const int8_t    & lhs, const uint256_t & rhs);
+BIGINT_CONSTEXPR uint256_t operator<<(const int16_t   & lhs, const uint256_t & rhs);
+BIGINT_CONSTEXPR uint256_t operator<<(const int32_t   & lhs, const uint256_t & rhs);
+BIGINT_CONSTEXPR uint256_t operator<<(const int64_t   & lhs, const uint256_t & rhs);
 
-constexpr uint128_t & operator<<=(uint128_t & lhs, const uint256_t & rhs);
+BIGINT_CONSTEXPR uint128_t & operator<<=(uint128_t & lhs, const uint256_t & rhs);
 
-template <typename T> constexpr T & operator<<=(T & lhs, const uint256_t & rhs){
+template <typename T> BIGINT_CONSTEXPR T & operator<<=(T & lhs, const uint256_t & rhs){
     lhs = static_cast <T> (uint256_t(lhs) << rhs);
     return lhs;
 }
 
-constexpr uint256_t operator>>(const bool      & lhs, const uint256_t & rhs);
-constexpr uint256_t operator>>(const uint8_t   & lhs, const uint256_t & rhs);
-constexpr uint256_t operator>>(const uint16_t  & lhs, const uint256_t & rhs);
-constexpr uint256_t operator>>(const uint32_t  & lhs, const uint256_t & rhs);
-constexpr uint256_t operator>>(const uint64_t  & lhs, const uint256_t & rhs);
-constexpr uint256_t operator>>(const uint128_t & lhs, const uint256_t & rhs);
-constexpr uint256_t operator>>(const int8_t    & lhs, const uint256_t & rhs);
-constexpr uint256_t operator>>(const int16_t   & lhs, const uint256_t & rhs);
-constexpr uint256_t operator>>(const int32_t   & lhs, const uint256_t & rhs);
-constexpr uint256_t operator>>(const int64_t   & lhs, const uint256_t & rhs);
+BIGINT_CONSTEXPR uint256_t operator>>(const bool      & lhs, const uint256_t & rhs);
+BIGINT_CONSTEXPR uint256_t operator>>(const uint8_t   & lhs, const uint256_t & rhs);
+BIGINT_CONSTEXPR uint256_t operator>>(const uint16_t  & lhs, const uint256_t & rhs);
+BIGINT_CONSTEXPR uint256_t operator>>(const uint32_t  & lhs, const uint256_t & rhs);
+BIGINT_CONSTEXPR uint256_t operator>>(const uint64_t  & lhs, const uint256_t & rhs);
+BIGINT_CONSTEXPR uint256_t operator>>(const uint128_t & lhs, const uint256_t & rhs);
+BIGINT_CONSTEXPR uint256_t operator>>(const int8_t    & lhs, const uint256_t & rhs);
+BIGINT_CONSTEXPR uint256_t operator>>(const int16_t   & lhs, const uint256_t & rhs);
+BIGINT_CONSTEXPR uint256_t operator>>(const int32_t   & lhs, const uint256_t & rhs);
+BIGINT_CONSTEXPR uint256_t operator>>(const int64_t   & lhs, const uint256_t & rhs);
 
-constexpr uint128_t & operator>>=(uint128_t & lhs, const uint256_t & rhs);
+BIGINT_CONSTEXPR uint128_t & operator>>=(uint128_t & lhs, const uint256_t & rhs);
 
-template <typename T> constexpr T & operator>>=(T & lhs, const uint256_t & rhs){
+template <typename T> BIGINT_CONSTEXPR T & operator>>=(T & lhs, const uint256_t & rhs){
     return lhs = static_cast <T> (uint256_t(lhs) >> rhs);
 }
 
 // Comparison Operators
-constexpr bool operator==(const uint128_t & lhs, const uint256_t & rhs);
+BIGINT_CONSTEXPR bool operator==(const uint128_t & lhs, const uint256_t & rhs);
 
-template <typename T> constexpr bool operator==(const T & lhs, const uint256_t & rhs){
+template <typename T> BIGINT_CONSTEXPR bool operator==(const T & lhs, const uint256_t & rhs){
     return (!rhs.upper() && ((uint64_t) lhs == rhs.lower()));
 }
 
-constexpr bool operator!=(const uint128_t & lhs, const uint256_t & rhs);
+BIGINT_CONSTEXPR bool operator!=(const uint128_t & lhs, const uint256_t & rhs);
 
-template <typename T> constexpr bool operator!=(const T & lhs, const uint256_t & rhs){
+template <typename T> BIGINT_CONSTEXPR bool operator!=(const T & lhs, const uint256_t & rhs){
     return (rhs.upper() | ((uint64_t) lhs != rhs.lower()));
 }
 
-constexpr bool operator>(const uint128_t & lhs, const uint256_t & rhs);
+BIGINT_CONSTEXPR bool operator>(const uint128_t & lhs, const uint256_t & rhs);
 
-template <typename T> constexpr bool operator>(const T & lhs, const uint256_t & rhs){
+template <typename T> BIGINT_CONSTEXPR bool operator>(const T & lhs, const uint256_t & rhs){
     return rhs.upper()?false:((uint128_t) lhs > rhs.lower());
 }
 
-constexpr bool operator<(const uint128_t & lhs, const uint256_t & rhs);
+BIGINT_CONSTEXPR bool operator<(const uint128_t & lhs, const uint256_t & rhs);
 
-template <typename T> constexpr bool operator<(const T & lhs, const uint256_t & rhs){
+template <typename T> BIGINT_CONSTEXPR bool operator<(const T & lhs, const uint256_t & rhs){
     return rhs.upper()?true:((uint128_t) lhs < rhs.lower());
 }
 
-constexpr bool operator>=(const uint128_t & lhs, const uint256_t & rhs);
+BIGINT_CONSTEXPR bool operator>=(const uint128_t & lhs, const uint256_t & rhs);
 
-template <typename T> constexpr bool operator>=(const T & lhs, const uint256_t & rhs){
+template <typename T> BIGINT_CONSTEXPR bool operator>=(const T & lhs, const uint256_t & rhs){
     return rhs.upper()?false:((uint128_t) lhs >= rhs.lower());
 }
 
-constexpr bool operator<=(const uint128_t & lhs, const uint256_t & rhs);
+BIGINT_CONSTEXPR bool operator<=(const uint128_t & lhs, const uint256_t & rhs);
 
-template <typename T> constexpr bool operator<=(const T & lhs, const uint256_t & rhs){
+template <typename T> BIGINT_CONSTEXPR bool operator<=(const T & lhs, const uint256_t & rhs){
     return rhs.upper()?true:((uint128_t) lhs <= rhs.lower());
 }
 
 // Arithmetic Operators
-constexpr uint256_t operator+(const uint128_t & lhs, const uint256_t & rhs);
+BIGINT_CONSTEXPR uint256_t operator+(const uint128_t & lhs, const uint256_t & rhs);
 
-template <typename T> constexpr uint256_t operator+(const T & lhs, const uint256_t & rhs){
+template <typename T> BIGINT_CONSTEXPR uint256_t operator+(const T & lhs, const uint256_t & rhs){
     return rhs + lhs;
 }
 
-constexpr uint128_t & operator+=(uint128_t & lhs, const uint256_t & rhs);
+BIGINT_CONSTEXPR uint128_t & operator+=(uint128_t & lhs, const uint256_t & rhs);
 
-template <typename T> constexpr T & operator+=(T & lhs, const uint256_t & rhs){
+template <typename T> BIGINT_CONSTEXPR T & operator+=(T & lhs, const uint256_t & rhs){
     lhs = static_cast <T> (rhs + lhs);
     return lhs;
 }
 
-constexpr uint256_t operator-(const uint128_t & lhs, const uint256_t & rhs);
+BIGINT_CONSTEXPR uint256_t operator-(const uint128_t & lhs, const uint256_t & rhs);
 
-template <typename T> constexpr uint256_t operator-(const T & lhs, const uint256_t & rhs){
+template <typename T> BIGINT_CONSTEXPR uint256_t operator-(const T & lhs, const uint256_t & rhs){
     return -(rhs - lhs);
 }
 
-constexpr uint128_t & operator-=(uint128_t & lhs, const uint256_t & rhs);
+BIGINT_CONSTEXPR uint128_t & operator-=(uint128_t & lhs, const uint256_t & rhs);
 
-template <typename T> constexpr T & operator-=(T & lhs, const uint256_t & rhs){
+template <typename T> BIGINT_CONSTEXPR T & operator-=(T & lhs, const uint256_t & rhs){
     return lhs = static_cast <T> (-(rhs - lhs));
 }
 
-constexpr uint256_t operator*(const uint128_t & lhs, const uint256_t & rhs);
+BIGINT_CONSTEXPR uint256_t operator*(const uint128_t & lhs, const uint256_t & rhs);
 
-template <typename T> constexpr uint256_t operator*(const T & lhs, const uint256_t & rhs){
+template <typename T> BIGINT_CONSTEXPR uint256_t operator*(const T & lhs, const uint256_t & rhs){
     return rhs * lhs;
 }
 
-constexpr uint128_t & operator*=(uint128_t & lhs, const uint256_t & rhs);
+BIGINT_CONSTEXPR uint128_t & operator*=(uint128_t & lhs, const uint256_t & rhs);
 
-template <typename T> constexpr T & operator*=(T & lhs, const uint256_t & rhs){
+template <typename T> BIGINT_CONSTEXPR T & operator*=(T & lhs, const uint256_t & rhs){
     return lhs = static_cast <T> (rhs * lhs);
 }
 
-constexpr uint256_t operator/(const uint128_t & lhs, const uint256_t & rhs);
+BIGINT_CONSTEXPR uint256_t operator/(const uint128_t & lhs, const uint256_t & rhs);
 
-template <typename T> constexpr uint256_t operator/(const T & lhs, const uint256_t & rhs){
+template <typename T> BIGINT_CONSTEXPR uint256_t operator/(const T & lhs, const uint256_t & rhs){
     return uint256_t(lhs) / rhs;
 }
 
-constexpr uint128_t & operator/=(uint128_t & lhs, const uint256_t & rhs);
+BIGINT_CONSTEXPR uint128_t & operator/=(uint128_t & lhs, const uint256_t & rhs);
 
-template <typename T> constexpr T & operator/=(T & lhs, const uint256_t & rhs){
+template <typename T> BIGINT_CONSTEXPR T & operator/=(T & lhs, const uint256_t & rhs){
     return lhs = static_cast <T> (uint256_t(lhs) / rhs);
 }
 
-constexpr uint256_t operator%(const uint128_t & lhs, const uint256_t & rhs);
+BIGINT_CONSTEXPR uint256_t operator%(const uint128_t & lhs, const uint256_t & rhs);
 
-template <typename T> constexpr uint256_t operator%(const T & lhs, const uint256_t & rhs){
+template <typename T> BIGINT_CONSTEXPR uint256_t operator%(const T & lhs, const uint256_t & rhs){
     return uint256_t(lhs) % rhs;
 }
 
-constexpr uint128_t & operator%=(uint128_t & lhs, const uint256_t & rhs);
+BIGINT_CONSTEXPR uint128_t & operator%=(uint128_t & lhs, const uint256_t & rhs);
 
-template <typename T> constexpr T & operator%=(T & lhs, const uint256_t & rhs){
+template <typename T> BIGINT_CONSTEXPR T & operator%=(T & lhs, const uint256_t & rhs){
     return lhs = static_cast <T> (uint256_t(lhs) % rhs);
 }
 
 // IO Operator
 std::ostream & operator<<(std::ostream & stream, const uint256_t & rhs);
 
-constexpr uint256_t::uint256_t()
+BIGINT_CONSTEXPR uint256_t::uint256_t()
     : UPPER(uint128_0), LOWER(uint128_0)
 {}
 
-constexpr uint256_t::uint256_t(const uint256_t & rhs)
+BIGINT_CONSTEXPR uint256_t::uint256_t(const uint256_t & rhs)
     : UPPER(rhs.UPPER), LOWER(rhs.LOWER)
 {}
 
-constexpr uint256_t::uint256_t(uint256_t && rhs)
+BIGINT_CONSTEXPR uint256_t::uint256_t(uint256_t && rhs)
     : UPPER(std::move(rhs.UPPER)), LOWER(std::move(rhs.LOWER))
 {
     if (this != &rhs){
@@ -1423,13 +1425,13 @@ constexpr uint256_t::uint256_t(uint256_t && rhs)
 
 
 
-constexpr uint256_t uint256_t::operator=(const uint256_t & rhs){
+BIGINT_CONSTEXPR uint256_t uint256_t::operator=(const uint256_t & rhs){
     UPPER = rhs.UPPER;
     LOWER = rhs.LOWER;
     return *this;
 }
 
-constexpr uint256_t uint256_t::operator=(uint256_t && rhs){
+BIGINT_CONSTEXPR uint256_t uint256_t::operator=(uint256_t && rhs){
     if (this != &rhs){
         UPPER = std::move(rhs.UPPER);
         LOWER = std::move(rhs.LOWER);
@@ -1439,97 +1441,97 @@ constexpr uint256_t uint256_t::operator=(uint256_t && rhs){
     return *this;
 }
 
-constexpr uint256_t::operator bool() const{
+BIGINT_CONSTEXPR uint256_t::operator bool() const{
     return (bool) (UPPER | LOWER);
 }
 
-constexpr uint256_t::operator uint8_t() const{
+BIGINT_CONSTEXPR uint256_t::operator uint8_t() const{
     return (uint8_t) LOWER;
 }
 
-constexpr uint256_t::operator uint16_t() const{
+BIGINT_CONSTEXPR uint256_t::operator uint16_t() const{
     return (uint16_t) LOWER;
 }
 
-constexpr uint256_t::operator uint32_t() const{
+BIGINT_CONSTEXPR uint256_t::operator uint32_t() const{
     return (uint32_t) LOWER;
 }
 
-constexpr uint256_t::operator uint64_t() const{
+BIGINT_CONSTEXPR uint256_t::operator uint64_t() const{
     return (uint64_t) LOWER;
 }
 
-constexpr uint256_t::operator uint128_t() const{
+BIGINT_CONSTEXPR uint256_t::operator uint128_t() const{
     return LOWER;
 }
 
-constexpr uint256_t uint256_t::operator&(const uint128_t & rhs) const{
+BIGINT_CONSTEXPR uint256_t uint256_t::operator&(const uint128_t & rhs) const{
     return uint256_t(uint128_0, LOWER & rhs);
 }
 
-constexpr uint256_t uint256_t::operator&(const uint256_t & rhs) const{
+BIGINT_CONSTEXPR uint256_t uint256_t::operator&(const uint256_t & rhs) const{
     return uint256_t(UPPER & rhs.UPPER, LOWER & rhs.LOWER);
 }
 
-constexpr uint256_t & uint256_t::operator&=(const uint128_t & rhs){
+BIGINT_CONSTEXPR uint256_t & uint256_t::operator&=(const uint128_t & rhs){
     UPPER  = uint128_0;
     LOWER &= rhs;
     return *this;
 }
 
-constexpr uint256_t & uint256_t::operator&=(const uint256_t & rhs){
+BIGINT_CONSTEXPR uint256_t & uint256_t::operator&=(const uint256_t & rhs){
     UPPER &= rhs.UPPER;
     LOWER &= rhs.LOWER;
     return *this;
 }
 
-constexpr uint256_t uint256_t::operator|(const uint128_t & rhs) const{
+BIGINT_CONSTEXPR uint256_t uint256_t::operator|(const uint128_t & rhs) const{
     return uint256_t(UPPER , LOWER | rhs);
 }
 
-constexpr uint256_t uint256_t::operator|(const uint256_t & rhs) const{
+BIGINT_CONSTEXPR uint256_t uint256_t::operator|(const uint256_t & rhs) const{
     return uint256_t(UPPER | rhs.UPPER, LOWER | rhs.LOWER);
 }
 
-constexpr uint256_t & uint256_t::operator|=(const uint128_t & rhs){
+BIGINT_CONSTEXPR uint256_t & uint256_t::operator|=(const uint128_t & rhs){
     LOWER |= rhs;
     return *this;
 }
 
-constexpr uint256_t & uint256_t::operator|=(const uint256_t & rhs){
+BIGINT_CONSTEXPR uint256_t & uint256_t::operator|=(const uint256_t & rhs){
     UPPER |= rhs.UPPER;
     LOWER |= rhs.LOWER;
     return *this;
 }
 
-constexpr uint256_t uint256_t::operator^(const uint128_t & rhs) const{
+BIGINT_CONSTEXPR uint256_t uint256_t::operator^(const uint128_t & rhs) const{
     return uint256_t(UPPER, LOWER ^ rhs);
 }
 
-constexpr uint256_t uint256_t::operator^(const uint256_t & rhs) const{
+BIGINT_CONSTEXPR uint256_t uint256_t::operator^(const uint256_t & rhs) const{
     return uint256_t(UPPER ^ rhs.UPPER, LOWER ^ rhs.LOWER);
 }
 
-constexpr uint256_t & uint256_t::operator^=(const uint128_t & rhs){
+BIGINT_CONSTEXPR uint256_t & uint256_t::operator^=(const uint128_t & rhs){
     LOWER ^= rhs;
     return *this;
 }
 
-constexpr uint256_t & uint256_t::operator^=(const uint256_t & rhs){
+BIGINT_CONSTEXPR uint256_t & uint256_t::operator^=(const uint256_t & rhs){
     UPPER ^= rhs.UPPER;
     LOWER ^= rhs.LOWER;
     return *this;
 }
 
-constexpr uint256_t uint256_t::operator~() const{
+BIGINT_CONSTEXPR uint256_t uint256_t::operator~() const{
     return uint256_t(~UPPER, ~LOWER);
 }
 
-constexpr uint256_t uint256_t::operator<<(const uint128_t & rhs) const{
+BIGINT_CONSTEXPR uint256_t uint256_t::operator<<(const uint128_t & rhs) const{
     return *this << uint256_t(rhs);
 }
 
-constexpr uint256_t uint256_t::operator<<(const uint256_t & rhs) const{
+BIGINT_CONSTEXPR uint256_t uint256_t::operator<<(const uint256_t & rhs) const{
     const uint128_t shift = rhs.LOWER;
     if (((bool) rhs.UPPER) || (shift >= uint128_256)){
         return 0;
@@ -1551,20 +1553,20 @@ constexpr uint256_t uint256_t::operator<<(const uint256_t & rhs) const{
     }
 }
 
-constexpr uint256_t & uint256_t::operator<<=(const uint128_t & shift){
+BIGINT_CONSTEXPR uint256_t & uint256_t::operator<<=(const uint128_t & shift){
     return *this <<= uint256_t(shift);
 }
 
-constexpr uint256_t & uint256_t::operator<<=(const uint256_t & shift){
+BIGINT_CONSTEXPR uint256_t & uint256_t::operator<<=(const uint256_t & shift){
     *this = *this << shift;
     return *this;
 }
 
-constexpr uint256_t uint256_t::operator>>(const uint128_t & rhs) const{
+BIGINT_CONSTEXPR uint256_t uint256_t::operator>>(const uint128_t & rhs) const{
     return *this >> uint256_t(rhs);
 }
 
-constexpr uint256_t uint256_t::operator>>(const uint256_t & rhs) const{
+BIGINT_CONSTEXPR uint256_t uint256_t::operator>>(const uint256_t & rhs) const{
     const uint128_t shift = rhs.LOWER;
     if (((bool) rhs.UPPER) | (shift >= uint128_256)){
         return 0;
@@ -1586,56 +1588,56 @@ constexpr uint256_t uint256_t::operator>>(const uint256_t & rhs) const{
     }
 }
 
-constexpr uint256_t & uint256_t::operator>>=(const uint128_t & shift){
+BIGINT_CONSTEXPR uint256_t & uint256_t::operator>>=(const uint128_t & shift){
     return *this >>= uint128_t(shift);
 }
 
-constexpr uint256_t & uint256_t::operator>>=(const uint256_t & shift){
+BIGINT_CONSTEXPR uint256_t & uint256_t::operator>>=(const uint256_t & shift){
     *this = *this >> shift;
     return *this;
 }
 
-constexpr bool uint256_t::operator!() const{
+BIGINT_CONSTEXPR bool uint256_t::operator!() const{
     return ! (bool) *this;
 }
 
-constexpr bool uint256_t::operator&&(const uint128_t & rhs) const{
+BIGINT_CONSTEXPR bool uint256_t::operator&&(const uint128_t & rhs) const{
     return (*this && uint256_t(rhs));
 }
 
-constexpr bool uint256_t::operator&&(const uint256_t & rhs) const{
+BIGINT_CONSTEXPR bool uint256_t::operator&&(const uint256_t & rhs) const{
     return ((bool) *this && (bool) rhs);
 }
 
-constexpr bool uint256_t::operator||(const uint128_t & rhs) const{
+BIGINT_CONSTEXPR bool uint256_t::operator||(const uint128_t & rhs) const{
     return (*this || uint256_t(rhs));
 }
 
-constexpr bool uint256_t::operator||(const uint256_t & rhs) const{
+BIGINT_CONSTEXPR bool uint256_t::operator||(const uint256_t & rhs) const{
     return ((bool) *this || (bool) rhs);
 }
 
-constexpr bool uint256_t::operator==(const uint128_t & rhs) const{
+BIGINT_CONSTEXPR bool uint256_t::operator==(const uint128_t & rhs) const{
     return (*this == uint256_t(rhs));
 }
 
-constexpr bool uint256_t::operator==(const uint256_t & rhs) const{
+BIGINT_CONSTEXPR bool uint256_t::operator==(const uint256_t & rhs) const{
     return ((UPPER == rhs.UPPER) && (LOWER == rhs.LOWER));
 }
 
-constexpr bool uint256_t::operator!=(const uint128_t & rhs) const{
+BIGINT_CONSTEXPR bool uint256_t::operator!=(const uint128_t & rhs) const{
     return (*this != uint256_t(rhs));
 }
 
-constexpr bool uint256_t::operator!=(const uint256_t & rhs) const{
+BIGINT_CONSTEXPR bool uint256_t::operator!=(const uint256_t & rhs) const{
     return ((UPPER != rhs.UPPER) | (LOWER != rhs.LOWER));
 }
 
-constexpr bool uint256_t::operator>(const uint128_t & rhs) const{
+BIGINT_CONSTEXPR bool uint256_t::operator>(const uint128_t & rhs) const{
     return (*this > uint256_t(rhs));
 }
 
-constexpr bool uint256_t::operator>(const uint256_t & rhs) const{
+BIGINT_CONSTEXPR bool uint256_t::operator>(const uint256_t & rhs) const{
     if (UPPER == rhs.UPPER){
         return (LOWER > rhs.LOWER);
     }
@@ -1645,11 +1647,11 @@ constexpr bool uint256_t::operator>(const uint256_t & rhs) const{
     return false;
 }
 
-constexpr bool uint256_t::operator<(const uint128_t & rhs) const{
+BIGINT_CONSTEXPR bool uint256_t::operator<(const uint128_t & rhs) const{
     return (*this < uint256_t(rhs));
 }
 
-constexpr bool uint256_t::operator<(const uint256_t & rhs) const{
+BIGINT_CONSTEXPR bool uint256_t::operator<(const uint256_t & rhs) const{
     if (UPPER == rhs.UPPER){
         return (LOWER < rhs.LOWER);
     }
@@ -1659,62 +1661,62 @@ constexpr bool uint256_t::operator<(const uint256_t & rhs) const{
     return false;
 }
 
-constexpr bool uint256_t::operator>=(const uint128_t & rhs) const{
+BIGINT_CONSTEXPR bool uint256_t::operator>=(const uint128_t & rhs) const{
     return (*this >= uint256_t(rhs));
 }
 
-constexpr bool uint256_t::operator>=(const uint256_t & rhs) const{
+BIGINT_CONSTEXPR bool uint256_t::operator>=(const uint256_t & rhs) const{
     return ((*this > rhs) | (*this == rhs));
 }
 
-constexpr bool uint256_t::operator<=(const uint128_t & rhs) const{
+BIGINT_CONSTEXPR bool uint256_t::operator<=(const uint128_t & rhs) const{
     return (*this <= uint256_t(rhs));
 }
 
-constexpr bool uint256_t::operator<=(const uint256_t & rhs) const{
+BIGINT_CONSTEXPR bool uint256_t::operator<=(const uint256_t & rhs) const{
     return ((*this < rhs) | (*this == rhs));
 }
 
-constexpr uint256_t uint256_t::operator+(const uint128_t & rhs) const{
+BIGINT_CONSTEXPR uint256_t uint256_t::operator+(const uint128_t & rhs) const{
     return *this + uint256_t(rhs);
 }
 
-constexpr uint256_t uint256_t::operator+(const uint256_t & rhs) const{
+BIGINT_CONSTEXPR uint256_t uint256_t::operator+(const uint256_t & rhs) const{
     return uint256_t(UPPER + rhs.UPPER + (((LOWER + rhs.LOWER) < LOWER)?uint128_1:uint128_0), LOWER + rhs.LOWER);
 }
 
-constexpr uint256_t & uint256_t::operator+=(const uint128_t & rhs){
+BIGINT_CONSTEXPR uint256_t & uint256_t::operator+=(const uint128_t & rhs){
     return *this += uint256_t(rhs);
 }
 
-constexpr uint256_t & uint256_t::operator+=(const uint256_t & rhs){
+BIGINT_CONSTEXPR uint256_t & uint256_t::operator+=(const uint256_t & rhs){
     UPPER = rhs.UPPER + UPPER + ((LOWER + rhs.LOWER) < LOWER);
     LOWER = LOWER + rhs.LOWER;
     return *this;
 }
 
-constexpr uint256_t uint256_t::operator-(const uint128_t & rhs) const{
+BIGINT_CONSTEXPR uint256_t uint256_t::operator-(const uint128_t & rhs) const{
     return *this - uint256_t(rhs);
 }
 
-constexpr uint256_t uint256_t::operator-(const uint256_t & rhs) const{
+BIGINT_CONSTEXPR uint256_t uint256_t::operator-(const uint256_t & rhs) const{
     return uint256_t(UPPER - rhs.UPPER - ((LOWER - rhs.LOWER) > LOWER), LOWER - rhs.LOWER);
 }
 
-constexpr uint256_t & uint256_t::operator-=(const uint128_t & rhs){
+BIGINT_CONSTEXPR uint256_t & uint256_t::operator-=(const uint128_t & rhs){
     return *this -= uint256_t(rhs);
 }
 
-constexpr uint256_t & uint256_t::operator-=(const uint256_t & rhs){
+BIGINT_CONSTEXPR uint256_t & uint256_t::operator-=(const uint256_t & rhs){
     *this = *this - rhs;
     return *this;
 }
 
-constexpr uint256_t uint256_t::operator*(const uint128_t & rhs) const{
+BIGINT_CONSTEXPR uint256_t uint256_t::operator*(const uint128_t & rhs) const{
     return *this * uint256_t(rhs);
 }
 
-constexpr uint256_t uint256_t::operator*(const uint256_t & rhs) const{
+BIGINT_CONSTEXPR uint256_t uint256_t::operator*(const uint256_t & rhs) const{
     // split values into 4 64-bit parts
     uint128_t top[4] = {UPPER.upper(), UPPER.lower(), LOWER.upper(), LOWER.lower()};
     uint128_t bottom[4] = {rhs.upper().upper(), rhs.upper().lower(), rhs.lower().upper(), rhs.lower().lower()};
@@ -1752,20 +1754,21 @@ constexpr uint256_t uint256_t::operator*(const uint256_t & rhs) const{
            uint256_t(fourth64);
 }
 
-constexpr uint256_t & uint256_t::operator*=(const uint128_t & rhs){
+BIGINT_CONSTEXPR uint256_t & uint256_t::operator*=(const uint128_t & rhs){
     return *this *= uint256_t(rhs);
 }
 
-constexpr uint256_t & uint256_t::operator*=(const uint256_t & rhs){
+BIGINT_CONSTEXPR uint256_t & uint256_t::operator*=(const uint256_t & rhs){
     *this = *this * rhs;
     return *this;
 }
 
-constexpr std::pair <uint256_t, uint256_t> uint256_t::divmod(const uint256_t & lhs, const uint256_t & rhs) const{
+BIGINT_CONSTEXPR std::pair <uint256_t, uint256_t> uint256_t::divmod(const uint256_t & lhs, const uint256_t & rhs) const{
     // Save some calculations /////////////////////
     if (rhs == 0){
         assume(false);
     }
+    /*
     else if (rhs == 1){
         return std::pair <uint256_t, uint256_t> (lhs, 0);
     }
@@ -1774,11 +1777,11 @@ constexpr std::pair <uint256_t, uint256_t> uint256_t::divmod(const uint256_t & l
     }
     else if ((lhs == 0) || (lhs < rhs)){
         return std::pair <uint256_t, uint256_t> (0, lhs);
-    }
+    }*/
 
     std::pair <uint256_t, uint256_t> qr(0, lhs);
     uint256_t copyd = rhs << (lhs.bits() - rhs.bits());
-    uint256_t adder = 1 << (lhs.bits() - rhs.bits());
+    uint256_t adder = 1 << static_cast<uint32_t>(lhs.bits() - rhs.bits());
     if (copyd > qr.second){
         copyd >>= 1;
         adder >>= 1;
@@ -1794,80 +1797,80 @@ constexpr std::pair <uint256_t, uint256_t> uint256_t::divmod(const uint256_t & l
     return qr;
 }
 
-constexpr uint256_t uint256_t::operator/(const uint128_t & rhs) const{
+BIGINT_CONSTEXPR uint256_t uint256_t::operator/(const uint128_t & rhs) const{
     return *this / uint256_t(rhs);
 }
 
-constexpr uint256_t uint256_t::operator/(const uint256_t & rhs) const{
+BIGINT_CONSTEXPR uint256_t uint256_t::operator/(const uint256_t & rhs) const{
     return divmod(*this, rhs).first;
 }
 
-constexpr uint256_t & uint256_t::operator/=(const uint128_t & rhs){
+BIGINT_CONSTEXPR uint256_t & uint256_t::operator/=(const uint128_t & rhs){
     return *this /= uint256_t(rhs);
 }
 
-constexpr uint256_t & uint256_t::operator/=(const uint256_t & rhs){
+BIGINT_CONSTEXPR uint256_t & uint256_t::operator/=(const uint256_t & rhs){
     *this = *this / rhs;
     return *this;
 }
 
-constexpr uint256_t uint256_t::operator%(const uint128_t & rhs) const{
+BIGINT_CONSTEXPR uint256_t uint256_t::operator%(const uint128_t & rhs) const{
     return *this % uint256_t(rhs);
 }
 
-constexpr uint256_t uint256_t::operator%(const uint256_t & rhs) const{
+BIGINT_CONSTEXPR uint256_t uint256_t::operator%(const uint256_t & rhs) const{
     return *this - (rhs * (*this / rhs));
 }
 
-constexpr uint256_t & uint256_t::operator%=(const uint128_t & rhs){
+BIGINT_CONSTEXPR uint256_t & uint256_t::operator%=(const uint128_t & rhs){
     return *this %= uint256_t(rhs);
 }
 
-constexpr uint256_t & uint256_t::operator%=(const uint256_t & rhs){
+BIGINT_CONSTEXPR uint256_t & uint256_t::operator%=(const uint256_t & rhs){
     *this = *this % rhs;
     return *this;
 }
 
-constexpr uint256_t & uint256_t::operator++(){
+BIGINT_CONSTEXPR uint256_t & uint256_t::operator++(){
     *this += 1;
     return *this;
 }
 
-constexpr uint256_t uint256_t::operator++(int){
+BIGINT_CONSTEXPR uint256_t uint256_t::operator++(int){
     uint256_t temp(*this);
     ++*this;
     return temp;
 }
 
-constexpr uint256_t & uint256_t::operator--(){
+BIGINT_CONSTEXPR uint256_t & uint256_t::operator--(){
     *this -= 1;
     return *this;
 }
 
-constexpr uint256_t uint256_t::operator--(int){
+BIGINT_CONSTEXPR uint256_t uint256_t::operator--(int){
     uint256_t temp(*this);
     --*this;
     return temp;
 }
 
-constexpr uint256_t uint256_t::operator+() const{
+BIGINT_CONSTEXPR uint256_t uint256_t::operator+() const{
     return *this;
 }
 
-constexpr uint256_t uint256_t::operator-() const{
+BIGINT_CONSTEXPR uint256_t uint256_t::operator-() const{
     return ~*this + 1;
 }
 
-constexpr const uint128_t & uint256_t::upper() const {
+BIGINT_CONSTEXPR const uint128_t & uint256_t::upper() const {
     return UPPER;
 }
 
-constexpr const uint128_t & uint256_t::lower() const {
+BIGINT_CONSTEXPR const uint128_t & uint256_t::lower() const {
     return LOWER;
 }
 
-constexpr uint16_t uint256_t::bits() const{
-    uint16_t out = 0;
+BIGINT_CONSTEXPR bigint_u32type uint256_t::bits() const{
+    bigint_u32type out = 0;
     if (UPPER){
         out = 128;
         uint128_t up = UPPER;
@@ -1907,190 +1910,190 @@ std::string uint256_t::str(uint8_t base, const unsigned int & len) const{
     return out;
 }
 
-constexpr uint256_t operator&(const uint128_t & lhs, const uint256_t & rhs){
+BIGINT_CONSTEXPR uint256_t operator&(const uint128_t & lhs, const uint256_t & rhs){
     return rhs & lhs;
 }
 
-constexpr uint128_t & operator&=(uint128_t & lhs, const uint256_t & rhs){
+BIGINT_CONSTEXPR uint128_t & operator&=(uint128_t & lhs, const uint256_t & rhs){
     lhs = (rhs & lhs).lower();
     return lhs;
 }
 
-constexpr uint256_t operator|(const uint128_t & lhs, const uint256_t & rhs){
+BIGINT_CONSTEXPR uint256_t operator|(const uint128_t & lhs, const uint256_t & rhs){
     return rhs | lhs;
 }
 
-constexpr uint128_t & operator|=(uint128_t & lhs, const uint256_t & rhs){
+BIGINT_CONSTEXPR uint128_t & operator|=(uint128_t & lhs, const uint256_t & rhs){
     lhs = (rhs | lhs).lower();
     return lhs;
 }
 
-constexpr uint256_t operator^(const uint128_t & lhs, const uint256_t & rhs){
+BIGINT_CONSTEXPR uint256_t operator^(const uint128_t & lhs, const uint256_t & rhs){
     return rhs ^ lhs;
 }
 
-constexpr uint128_t & operator^=(uint128_t & lhs, const uint256_t & rhs){
+BIGINT_CONSTEXPR uint128_t & operator^=(uint128_t & lhs, const uint256_t & rhs){
     lhs = (rhs ^ lhs).lower();
     return lhs;
 }
 
-constexpr uint256_t operator<<(const bool & lhs, const uint256_t & rhs){
+BIGINT_CONSTEXPR uint256_t operator<<(const bool & lhs, const uint256_t & rhs){
     return uint256_t(lhs) << rhs;
 }
 
-constexpr uint256_t operator<<(const uint8_t & lhs, const uint256_t & rhs){
+BIGINT_CONSTEXPR uint256_t operator<<(const uint8_t & lhs, const uint256_t & rhs){
     return uint256_t(lhs) << rhs;
 }
 
-constexpr uint256_t operator<<(const uint16_t & lhs, const uint256_t & rhs){
+BIGINT_CONSTEXPR uint256_t operator<<(const uint16_t & lhs, const uint256_t & rhs){
     return uint256_t(lhs) << rhs;
 }
 
-constexpr uint256_t operator<<(const uint32_t & lhs, const uint256_t & rhs){
+BIGINT_CONSTEXPR uint256_t operator<<(const uint32_t & lhs, const uint256_t & rhs){
     return uint256_t(lhs) << rhs;
 }
 
-constexpr uint256_t operator<<(const uint64_t & lhs, const uint256_t & rhs){
+BIGINT_CONSTEXPR uint256_t operator<<(const uint64_t & lhs, const uint256_t & rhs){
     return uint256_t(lhs) << rhs;
 }
 
-constexpr uint256_t operator<<(const uint128_t & lhs, const uint256_t & rhs){
+BIGINT_CONSTEXPR uint256_t operator<<(const uint128_t & lhs, const uint256_t & rhs){
     return uint256_t(lhs) << rhs;
 }
 
-constexpr uint256_t operator<<(const int8_t & lhs, const uint256_t & rhs){
+BIGINT_CONSTEXPR uint256_t operator<<(const int8_t & lhs, const uint256_t & rhs){
     return uint256_t(lhs) << rhs;
 }
 
-constexpr uint256_t operator<<(const int16_t & lhs, const uint256_t & rhs){
+BIGINT_CONSTEXPR uint256_t operator<<(const int16_t & lhs, const uint256_t & rhs){
     return uint256_t(lhs) << rhs;
 }
 
-constexpr uint256_t operator<<(const int32_t & lhs, const uint256_t & rhs){
+BIGINT_CONSTEXPR uint256_t operator<<(const int32_t & lhs, const uint256_t & rhs){
     return uint256_t(lhs) << rhs;
 }
 
-constexpr uint256_t operator<<(const int64_t & lhs, const uint256_t & rhs){
+BIGINT_CONSTEXPR uint256_t operator<<(const int64_t & lhs, const uint256_t & rhs){
     return uint256_t(lhs) << rhs;
 }
 
-constexpr uint128_t & operator<<=(uint128_t & lhs, const uint256_t & rhs){
+BIGINT_CONSTEXPR uint128_t & operator<<=(uint128_t & lhs, const uint256_t & rhs){
     lhs = (uint256_t(lhs) << rhs).lower();
     return lhs;
 }
 
-constexpr uint256_t operator>>(const bool & lhs, const uint256_t & rhs){
+BIGINT_CONSTEXPR uint256_t operator>>(const bool & lhs, const uint256_t & rhs){
     return uint256_t(lhs) >> rhs;
 }
 
-constexpr uint256_t operator>>(const uint8_t & lhs, const uint256_t & rhs){
+BIGINT_CONSTEXPR uint256_t operator>>(const uint8_t & lhs, const uint256_t & rhs){
     return uint256_t(lhs) >> rhs;
 }
 
-constexpr uint256_t operator>>(const uint16_t & lhs, const uint256_t & rhs){
+BIGINT_CONSTEXPR uint256_t operator>>(const uint16_t & lhs, const uint256_t & rhs){
     return uint256_t(lhs) >> rhs;
 }
 
-constexpr uint256_t operator>>(const uint32_t & lhs, const uint256_t & rhs){
+BIGINT_CONSTEXPR uint256_t operator>>(const uint32_t & lhs, const uint256_t & rhs){
     return uint256_t(lhs) >> rhs;
 }
 
-constexpr uint256_t operator>>(const uint64_t & lhs, const uint256_t & rhs){
+BIGINT_CONSTEXPR uint256_t operator>>(const uint64_t & lhs, const uint256_t & rhs){
     return uint256_t(lhs) >> rhs;
 }
 
-constexpr uint256_t operator>>(const uint128_t & lhs, const uint256_t & rhs){
+BIGINT_CONSTEXPR uint256_t operator>>(const uint128_t & lhs, const uint256_t & rhs){
     return uint256_t(lhs) >> rhs;
 }
 
-constexpr uint256_t operator>>(const int8_t & lhs, const uint256_t & rhs){
+BIGINT_CONSTEXPR uint256_t operator>>(const int8_t & lhs, const uint256_t & rhs){
     return uint256_t(lhs) >> rhs;
 }
 
-constexpr uint256_t operator>>(const int16_t & lhs, const uint256_t & rhs){
+BIGINT_CONSTEXPR uint256_t operator>>(const int16_t & lhs, const uint256_t & rhs){
     return uint256_t(lhs) >> rhs;
 }
 
-constexpr uint256_t operator>>(const int32_t & lhs, const uint256_t & rhs){
+BIGINT_CONSTEXPR uint256_t operator>>(const int32_t & lhs, const uint256_t & rhs){
     return uint256_t(lhs) >> rhs;
 }
 
-constexpr uint256_t operator>>(const int64_t & lhs, const uint256_t & rhs){
+BIGINT_CONSTEXPR uint256_t operator>>(const int64_t & lhs, const uint256_t & rhs){
     return uint256_t(lhs) >> rhs;
 }
 
-constexpr uint128_t & operator>>=(uint128_t & lhs, const uint256_t & rhs){
+BIGINT_CONSTEXPR uint128_t & operator>>=(uint128_t & lhs, const uint256_t & rhs){
     lhs = (uint256_t(lhs) >> rhs).lower();
     return lhs;
 }
 
 // Comparison Operators
-constexpr bool operator==(const uint128_t & lhs, const uint256_t & rhs){
+BIGINT_CONSTEXPR bool operator==(const uint128_t & lhs, const uint256_t & rhs){
     return rhs == lhs;
 }
 
-constexpr bool operator!=(const uint128_t & lhs, const uint256_t & rhs){
+BIGINT_CONSTEXPR bool operator!=(const uint128_t & lhs, const uint256_t & rhs){
     return rhs != lhs;
 }
 
-constexpr bool operator>(const uint128_t & lhs, const uint256_t & rhs){
+BIGINT_CONSTEXPR bool operator>(const uint128_t & lhs, const uint256_t & rhs){
     return rhs < lhs;
 }
 
-constexpr bool operator<(const uint128_t & lhs, const uint256_t & rhs){
+BIGINT_CONSTEXPR bool operator<(const uint128_t & lhs, const uint256_t & rhs){
     return rhs > lhs;
 }
 
-constexpr bool operator>=(const uint128_t & lhs, const uint256_t & rhs){
+BIGINT_CONSTEXPR bool operator>=(const uint128_t & lhs, const uint256_t & rhs){
     return rhs <= lhs;
 }
 
-constexpr bool operator<=(const uint128_t & lhs, const uint256_t & rhs){
+BIGINT_CONSTEXPR bool operator<=(const uint128_t & lhs, const uint256_t & rhs){
     return rhs >= lhs;
 }
 
 // Arithmetic Operators
-constexpr uint256_t operator+(const uint128_t & lhs, const uint256_t & rhs){
+BIGINT_CONSTEXPR uint256_t operator+(const uint128_t & lhs, const uint256_t & rhs){
     return rhs + lhs;
 }
 
-constexpr uint128_t & operator+=(uint128_t & lhs, const uint256_t & rhs){
+BIGINT_CONSTEXPR uint128_t & operator+=(uint128_t & lhs, const uint256_t & rhs){
     lhs = (rhs + lhs).lower();
     return lhs;
 }
 
-constexpr uint256_t operator-(const uint128_t & lhs, const uint256_t & rhs){
+BIGINT_CONSTEXPR uint256_t operator-(const uint128_t & lhs, const uint256_t & rhs){
     return -(rhs - lhs);
 }
 
-constexpr uint128_t & operator-=(uint128_t & lhs, const uint256_t & rhs){
+BIGINT_CONSTEXPR uint128_t & operator-=(uint128_t & lhs, const uint256_t & rhs){
     lhs = (-(rhs - lhs)).lower();
     return lhs;
 }
 
-constexpr uint256_t operator*(const uint128_t & lhs, const uint256_t & rhs){
+BIGINT_CONSTEXPR uint256_t operator*(const uint128_t & lhs, const uint256_t & rhs){
     return rhs * lhs;
 }
 
-constexpr uint128_t & operator*=(uint128_t & lhs, const uint256_t & rhs){
+BIGINT_CONSTEXPR uint128_t & operator*=(uint128_t & lhs, const uint256_t & rhs){
     lhs = (rhs * lhs).lower();
     return lhs;
 }
 
-constexpr uint256_t operator/(const uint128_t & lhs, const uint256_t & rhs){
+BIGINT_CONSTEXPR uint256_t operator/(const uint128_t & lhs, const uint256_t & rhs){
     return uint256_t(lhs) / rhs;
 }
 
-constexpr uint128_t & operator/=(uint128_t & lhs, const uint256_t & rhs){
+BIGINT_CONSTEXPR uint128_t & operator/=(uint128_t & lhs, const uint256_t & rhs){
     lhs = (uint256_t(lhs) / rhs).lower();
     return lhs;
 }
 
-constexpr uint256_t operator%(const uint128_t & lhs, const uint256_t & rhs){
+BIGINT_CONSTEXPR uint256_t operator%(const uint128_t & lhs, const uint256_t & rhs){
     return uint256_t(lhs) % rhs;
 }
 
-constexpr uint128_t & operator%=(uint128_t & lhs, const uint256_t & rhs){
+BIGINT_CONSTEXPR uint128_t & operator%=(uint128_t & lhs, const uint256_t & rhs){
     lhs = (uint256_t(lhs) % rhs).lower();
     return lhs;
 }
