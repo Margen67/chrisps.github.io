@@ -4,6 +4,54 @@
     <title>
         Float Fumbler
     </title>
+    <style>        
+        .modal {
+            display: none;
+            /* Hidden by default */
+            position: fixed;
+            /* Stay in place */
+            z-index: 1;
+            /* Sit on top */
+            padding-top: 100px;
+            /* Location of the box */
+            left: 0;
+            top: 0;
+            width: 100%;
+            /* Full width */
+            height: 100%;
+            /* Full height */
+            overflow: auto;
+            /* Enable scroll if needed */
+            background-color: rgb(0, 0, 0);
+            /* Fallback color */
+            background-color: rgba(0, 0, 0, 0.4);
+            /* Black w/ opacity */
+        }
+        /* Modal Content */
+        
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+        }
+        /* The Close Button */
+        
+        .close {
+            color: #aaaaaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        
+        .close:hover,
+        .close:focus {
+            color: #000;
+            text-decoration: none;
+            cursor: pointer;
+        }
+    </style>
 </head>
 
 <body>
@@ -16,8 +64,26 @@
             <textarea rows="20" cols="100" id="algo_input" size="8"></textarea>
             <br>
             <input type="button" id="exec_button" value="Execute"></input>
+            <input type="button" id="clear_output_button" value="Clear output"></input>
+            <input type="button" id="help_button" value="Help"></input>
             <br>Output<br><textarea rows="20" cols="100" id="output_area" disabled="true"></textarea>
         </form>
+        <div id="help_modal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <p>
+                    Just enter a floating point value you want to manipulate in the input box. 
+                    Below you may write javascript that manipulates the binary format of the value using the variables mantissa, exponent, sign, uvalue, and value. 
+                    <br><br>The initial input value is readable as a constant named originalValue. 
+                    Value corresponds to the floating point value with the current mantissa, sign and exponent, and is updated after each statement that writes to the float's components as well as after a write to uvalue. 
+                    The float's components are also updated by writes to value and uvalue. 
+                    uvalue corresponds to the binary representation of value/the union of mantissa, sign and exponent
+                    <br><br>
+                    Additionally, the function log(string) is predefined for writing to the output window.
+                </p>
+            </div>
+
+        </div>
     </div>
     <script type="text/javascript" src="fumbler/fumbler.js"></script>
 </body>
