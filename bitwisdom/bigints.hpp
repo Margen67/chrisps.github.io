@@ -466,12 +466,12 @@ BIGINT_CONSTEXPR uint128_t::uint128_t(uint128_t && rhs)
         rhs.LOWER = 0;
     }
 }
-BIGINT_CONSTEXPR uint128_t uint128_0 = 0;
-BIGINT_CONSTEXPR uint128_t uint128_1 = 1;
+constexpr uint128_t uint128_0 = 0;
+constexpr uint128_t uint128_1 = 1;
 
-BIGINT_CONSTEXPR uint128_t uint128_64(64);
-BIGINT_CONSTEXPR uint128_t uint128_128(128);
-BIGINT_CONSTEXPR uint128_t uint128_256(256);
+constexpr uint128_t uint128_64(64);
+constexpr uint128_t uint128_128(128);
+constexpr uint128_t uint128_256(256);
 BIGINT_CONSTEXPR uint128_t uint128_t::operator=(const uint128_t & rhs){
     UPPER = rhs.UPPER;
     LOWER = rhs.LOWER;

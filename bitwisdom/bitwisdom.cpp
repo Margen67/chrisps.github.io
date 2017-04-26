@@ -44,6 +44,7 @@ static Values_t operate(Values_t input, biggest_t param, biggest_t (*transformer
     }
     return result;
 }
+
 static biggest_t gcd( biggest_t x, biggest_t y )
 {
     if( x < y )
@@ -57,6 +58,14 @@ static biggest_t gcd( biggest_t x, biggest_t y )
     }
     return x;
 }  
+
+static jnum_t ctz(biggest_t in) {
+    jnum_t tz = 0;
+    for(biggest_t val = 1; val < bitsizeof<biggest_t> && !(val & in); val <<= 1) {
+        ++tz;
+    }
+    return tz;
+}
 
 static biggest_t gcd(Values_t vals) {
     biggest_t curr = vals[0];
@@ -88,7 +97,16 @@ static Values_t valarray;
 
 static biggest_t parseVal(String& value, jnum_t radix) {
     assume(radix == 16 || radix == 10 || radix == 2);
-    assume(&value != nullptr);
+    auto valueLength = value.get_length();
+    bool isneg = value.charCodeAt(0) == '-'_jchar;
+    //do some splitting for values over 32 bits
+    if(radix == 16) {
+        
+    } else if(radix == 10) {
+        
+    } else if(radix == 2) {
+
+    }
     return static_cast<uint64_t>(parseInt(value, radix));
 }
 
