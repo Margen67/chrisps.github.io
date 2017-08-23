@@ -176,3 +176,190 @@ export function Unfixer(fractional_bits : size_t) : (value : int_t) => real_t {
         return real(value) / fixed_one;
     }
 }
+
+enum FieldType {
+    i8 = 0,
+    u8 = 1,
+    i16 = 2,
+    u16 = 3,
+    i32 = 4,
+    u32 = 5,
+    f32 = 6,
+    f64 = 7
+}
+
+class StructField {
+    public name : PackedString_t;
+    public typ : FieldType;
+    public setter : any;
+    public getter : any;
+    public sizeof : size_t;
+    public elements : size_t;
+    public arrayType : Optional<any>;
+    public isString : bool_t;
+    constructor(name : string, typ : FieldType, elements : size_t = 1, isstring : bool_t = false) {
+        this.name = PackedString(name);
+        this.typ = typ;
+        this.sizeof = this.sizeof_() * elements;
+        this.elements = elements;
+        this.setter = this.setter_();
+
+        this.getter = this.getter_();
+        if(this.elements > 1)
+            this.arrayType = this.arraytype_();
+        this.isString = isstring;
+
+    }
+    public sizeof_() : size_t {
+        const typ : FieldType = this.typ;
+        switch(typ) {
+            case FieldType.i8:
+            case FieldType.u8:
+                return 1;
+            case FieldType.i16:
+            case FieldType.u16:
+                return 2;
+            case FieldType.i32:
+            case FieldType.u32:
+            case FieldType.f32:
+                return 4;
+            case FieldType.f64:
+                return 8;
+        }
+    }
+    private getter_() : any {
+        const typ : FieldType = this.typ;
+        switch(typ) {
+            case FieldType.i8:
+                return DataView.prototype.getInt8;
+            case FieldType.u8:
+                return DataView.prototype.getUint8;
+            case FieldType.i16:
+                return DataView.prototype.getInt16;
+            case FieldType.u16:
+                return DataView.prototype.getUint16;
+            case FieldType.i32:
+                return DataView.prototype.getInt32;
+            case FieldType.u32:
+                return DataView.prototype.getUint32;
+            case FieldType.f32:
+                return DataView.prototype.getFloat32;
+            case FieldType.f64:
+                return DataView.prototype.getFloat64;
+        }
+    }
+    private setter_() : any {
+        const typ : FieldType = this.typ;
+        switch(typ) {
+            case FieldType.i8:
+                return DataView.prototype.setInt8;
+            case FieldType.u8:
+                return DataView.prototype.setUint8;
+            case FieldType.i16:
+                return DataView.prototype.setInt16;
+            case FieldType.u16:
+                return DataView.prototype.setUint16;
+            case FieldType.i32:
+                return DataView.prototype.setInt32;
+            case FieldType.u32:
+                return DataView.prototype.setUint32;
+            case FieldType.f32:
+                return DataView.prototype.setFloat32;
+            case FieldType.f64:
+                return DataView.prototype.setFloat64;
+        }
+    }
+    private arraytype_() : any {
+        const typ : FieldType = this.typ;
+        switch(typ) {
+            case FieldType.i8:
+                return Int8Array;
+            case FieldType.u8:
+                return Uint8Array;
+            case FieldType.i16:
+                return Int16Array;
+            case FieldType.u16:
+                return Uint16Array;
+            case FieldType.i32:
+                return Int32Array;
+            case FieldType.u32:
+                return Uint32Array;
+            case FieldType.f32:
+                return Float32Array;
+            case FieldType.f64:
+                return Float64Array;
+        }
+    }
+}
+
+export class StructFactory {
+    private fields : Array<StructField>;
+    private sizeof : size_t;
+    constructor(...fields : Array<StructField>) {
+        let sizeof = 0;
+        for(let field of fields)
+            sizeof = addu(sizeof, field.sizeof);
+        //this.data = new DataView(new ArrayBuffer(sizeof));
+        this.sizeof = sizeof;
+        this.fields = fields;
+    }
+
+    public construct() {
+        let resultdata =  new DataView(new ArrayBuffer(this.sizeof));
+        let result = {
+            data : resultdata
+        };
+        let fields : Array<StructField> = this.fields;
+        let offset : size_t = 0;
+        for(let field of fields) {
+            let name = unpackString(field.name);
+
+            if(field.elements == 1) {
+                let getter = field.getter.bind(resultdata, offset);
+                let setter = field.setter.bind(resultdata, offset);
+                Object.defineProperty(
+                    result,
+                    name,
+                    {
+                        get: function () {
+                            return getter();
+                        },
+                        set: function (value: numeric_t) {
+                            setter(value);
+                        }
+                    }
+                );
+
+            } else {
+                let ctor = field.arrayType;
+                let implname = `${name}_`;
+                result[implname] = new ctor(resultdata.buffer, offset, field.elements);
+                Object.defineProperty(
+                    result,
+                    name,
+                    {
+                        get: function () {
+                            return result[implname];
+                        },
+                        set: (field.isString) ? function(iterable : string) {
+                            const iterations = iterable.length;
+                            const arr = result[implname];
+                            for(let i : idx_t = 0; i < iterations; ++i) {
+                                arr[i] = iterable.charCodeAt(i);
+                            }
+                        } : function(iterable) {
+                            const iterations = iterable.length;
+                            const arr = result[implname];
+                            for(let i : idx_t = 0; i < iterations; ++i) {
+                                arr[i] = iterable[i];
+                            }
+                        }
+                    }
+                );
+            }
+            offset = addu(offset, field.sizeof);
+        }
+        return result;
+    }
+
+}
